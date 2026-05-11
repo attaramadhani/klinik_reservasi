@@ -1,0 +1,22 @@
+# PHP
+.php_cs.cache
+.php-cs-fixer.cache
+vendor/
+
+# Database
+# koneksi.php # Uncomment this if you want to keep your credentials private
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Laragon / Web Server
+error_log
+access_log
+.htaccess
