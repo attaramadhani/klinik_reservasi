@@ -13,7 +13,7 @@ Cliniq adalah aplikasi berbasis web yang dirancang untuk memudahkan proses reser
 ## 🛠️ Teknologi yang Digunakan
 
 - **Bahasa Pemrograman**: PHP (Native)
-- **Database**: MySQL
+- **Database**: MySQL lokal atau Supabase PostgreSQL untuk deploy
 - **Frontend**: Bootstrap 5, Font Awesome 6
 - **Library**: SweetAlert2 (Notifikasi), Midtrans Snap JS (Pembayaran)
 
@@ -27,10 +27,12 @@ Cliniq adalah aplikasi berbasis web yang dirancang untuk memudahkan proses reser
 2. **Persiapan Database**:
    - Buat database baru bernama `klinik_reservasi` di MySQL (phpMyAdmin).
    - Import file `klinik_reservasi.sql` yang tersedia di root folder.
+   - Untuk Supabase, buat project Supabase lalu jalankan isi file `supabase_schema.sql` di SQL Editor.
 
 3. **Konfigurasi Koneksi**:
    - Buka file `koneksi.php`.
-   - Sesuaikan konfigurasi `$host`, `$user`, `$pass`, dan `$db` dengan server lokal Anda.
+   - Lokal MySQL tetap memakai default `127.0.0.1:3307`.
+   - Supabase/Vercel memakai environment variables dari `.env.example`.
 
 4. **Konfigurasi Midtrans**:
    - Buka file `admin/input_tagihan.php`.

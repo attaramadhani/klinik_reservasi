@@ -9,37 +9,37 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 }
 
 // Ambil parameter filter bulan (default ke bulan ini jika kosong)
-$filter_bulan = isset($_GET['bulan']) ? mysqli_real_escape_string($conn, $_GET['bulan']) : date('Y-m');
+$filter_bulan = isset($_GET['bulan']) ? db_real_escape_string($conn, $_GET['bulan']) : date('Y-m');
 $tahun_filter = date('Y', strtotime($filter_bulan . '-01'));
 
 // 1. Hitung total pendapatan berdasarkan bulan yang difilter
-$query_pendapatan = mysqli_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
+$query_pendapatan = db_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
                                          FROM pembayaran b 
                                          JOIN reservasi r ON b.id_reservasi = r.id_reservasi 
                                          WHERE b.status_pembayaran = 'Lunas' 
                                          AND DATE_FORMAT(r.tanggal_kunjungan, '%Y-%m') = '$filter_bulan'");
-$pendapatan_total = mysqli_fetch_assoc($query_pendapatan)['total_pendapatan'];
+$pendapatan_total = db_fetch_assoc($query_pendapatan)['total_pendapatan'];
 $pendapatan_total = $pendapatan_total ? $pendapatan_total : 0; 
 
 // Hitung total pendapatan tahunan (sepanjang tahun dari filter yang dipilih)
-$query_pendapatan_tahun = mysqli_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
+$query_pendapatan_tahun = db_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
                                          FROM pembayaran b 
                                          JOIN reservasi r ON b.id_reservasi = r.id_reservasi 
                                          WHERE b.status_pembayaran = 'Lunas' 
                                          AND DATE_FORMAT(r.tanggal_kunjungan, '%Y') = '$tahun_filter'");
-$pendapatan_tahun_ini = mysqli_fetch_assoc($query_pendapatan_tahun)['total_pendapatan'];
+$pendapatan_tahun_ini = db_fetch_assoc($query_pendapatan_tahun)['total_pendapatan'];
 $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
 
 // 2. Data untuk Grafik (Pendapatan per Bulan dalam Tahun Terpilih)
 $pendapatan_bulanan = array_fill(1, 12, 0); // Inisialisasi array 12 bulan dengan nilai 0
-$query_grafik = mysqli_query($conn, "SELECT MONTH(r.tanggal_kunjungan) as bulan, SUM(b.jumlah_bayar) as total 
+$query_grafik = db_query($conn, "SELECT MONTH(r.tanggal_kunjungan) as bulan, SUM(b.jumlah_bayar) as total 
                                      FROM pembayaran b 
                                      JOIN reservasi r ON b.id_reservasi = r.id_reservasi 
                                      WHERE b.status_pembayaran = 'Lunas' 
                                      AND YEAR(r.tanggal_kunjungan) = '$tahun_filter' 
                                      GROUP BY MONTH(r.tanggal_kunjungan)");
 
-while ($row_grafik = mysqli_fetch_assoc($query_grafik)) {
+while ($row_grafik = db_fetch_assoc($query_grafik)) {
     $pendapatan_bulanan[$row_grafik['bulan']] = (int)$row_grafik['total'];
 }
 // Konversi ke format JSON untuk Javascript
@@ -195,7 +195,7 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
                             </thead>
                             <tbody>
                                 <?php
-                                $query_ranking = mysqli_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
+                                $query_ranking = db_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
                                                                          FROM dokter d 
                                                                          LEFT JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter 
                                                                          LEFT JOIN reservasi r ON j.id_jadwal = r.id_jadwal 
@@ -205,7 +205,7 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
                                 $rank = 1;
                                 $has_data = false;
                                 
-                                while($row_rank = mysqli_fetch_assoc($query_ranking)):
+                                while($row_rank = db_fetch_assoc($query_ranking)):
                                     if($row_rank['total_reservasi'] > 0) $has_data = true; // Hanya tampilkan data jika ada
                                     
                                     $is_top = $rank == 1;

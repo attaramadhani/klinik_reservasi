@@ -10,8 +10,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 
 // Ambil ID Dokter yang sedang login
 $id_user = $_SESSION['id_user'];
-$q_dokter = mysqli_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
-$id_dokter = mysqli_fetch_assoc($q_dokter)['id_dokter'];
+$q_dokter = db_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
+$id_dokter = db_fetch_assoc($q_dokter)['id_dokter'];
 
 // Cek apakah ada parameter ID di URL
 if (!isset($_GET['id'])) {
@@ -19,12 +19,12 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$id_jadwal = mysqli_real_escape_string($conn, $_GET['id']);
+$id_jadwal = db_real_escape_string($conn, $_GET['id']);
 
 // Ambil data jadwal HANYA JIKA milik dokter yang sedang login
 $query_data = "SELECT * FROM jadwal_dokter WHERE id_jadwal = '$id_jadwal' AND id_dokter = '$id_dokter'";
-$result_data = mysqli_query($conn, $query_data);
-$data = mysqli_fetch_assoc($result_data);
+$result_data = db_query($conn, $query_data);
+$data = db_fetch_assoc($result_data);
 
 // Jika jadwal tidak ditemukan atau bukan milik dokter ini
 if (!$data) {
@@ -34,21 +34,21 @@ if (!$data) {
 
 // Proses Update Data
 if (isset($_POST['update'])) {
-    $hari = mysqli_real_escape_string($conn, $_POST['hari']);
-    $mulai = mysqli_real_escape_string($conn, $_POST['jam_mulai']);
-    $selesai = mysqli_real_escape_string($conn, $_POST['jam_selesai']);
+    $hari = db_real_escape_string($conn, $_POST['hari']);
+    $mulai = db_real_escape_string($conn, $_POST['jam_mulai']);
+    $selesai = db_real_escape_string($conn, $_POST['jam_selesai']);
     $kuota = (int) $_POST['kuota']; 
 
     $query_update = "UPDATE jadwal_dokter 
                      SET hari = '$hari', jam_mulai = '$mulai', jam_selesai = '$selesai', kuota = '$kuota' 
                      WHERE id_jadwal = '$id_jadwal' AND id_dokter = '$id_dokter'";
     
-    if(mysqli_query($conn, $query_update)) {
+    if(db_query($conn, $query_update)) {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
         echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'success', title: 'Berhasil', text: 'Jadwal Berhasil Diperbarui!'}).then(() => { window.location='jadwal.php'; }); });</script>";
     } else {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
-        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal memperbarui jadwal: " . mysqli_error($conn) . "'}); });</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal memperbarui jadwal: " . db_error($conn) . "'}); });</script>";
     }
 }
 ?>

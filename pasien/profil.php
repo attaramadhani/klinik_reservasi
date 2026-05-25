@@ -11,7 +11,7 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
 
 $id_user = $_SESSION['id_user'];
 // Query data user dengan JOIN untuk mendapatkan informasi lengkap
-$u = mysqli_fetch_assoc(mysqli_query($conn, "SELECT u.*, p.* FROM users u JOIN pasien p ON u.id_user = p.id_user WHERE u.id_user = '$id_user'"));
+$u = db_fetch_assoc(db_query($conn, "SELECT u.*, p.* FROM users u JOIN pasien p ON u.id_user = p.id_user WHERE u.id_user = '$id_user'"));
 ?>
 <!DOCTYPE html>
 <html lang="id">

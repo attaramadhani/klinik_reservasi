@@ -50,15 +50,15 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                     <?php
                     // PERBAIKAN: Mengambil data dari tabel reservasi yang statusnya berhubungan dengan pembayaran
                     // Kita pakai LEFT JOIN pembayaran, karena pasien yang baru selesai diperiksa belum punya data di tabel pembayaran
-                    $q = mysqli_query($conn, "SELECT r.*, p.nama_lengkap, b.id_pembayaran, b.metode_pembayaran, b.jumlah_bayar, b.status_pembayaran 
+                    $q = db_query($conn, "SELECT r.*, p.nama_lengkap, b.id_pembayaran, b.metode_pembayaran, b.jumlah_bayar, b.status_pembayaran 
                                               FROM reservasi r 
                                               JOIN pasien p ON r.nik = p.nik 
                                               LEFT JOIN pembayaran b ON r.id_reservasi = b.id_reservasi 
                                               WHERE r.status IN ('Menunggu Pembayaran', 'Selesai') 
                                               ORDER BY r.tanggal_kunjungan DESC, r.no_antrian DESC");
                     
-                    if(mysqli_num_rows($q) > 0){
-                        while($row = mysqli_fetch_assoc($q)):
+                    if(db_num_rows($q) > 0){
+                        while($row = db_fetch_assoc($q)):
                     ?>
                     <tr>
                         <td class="fw-bold text-secondary">#<?php echo $row['no_antrian']; ?></td>

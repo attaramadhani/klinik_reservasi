@@ -9,8 +9,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_dokter = mysqli_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
-$id_dokter = mysqli_fetch_assoc($q_dokter)['id_dokter'];
+$q_dokter = db_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
+$id_dokter = db_fetch_assoc($q_dokter)['id_dokter'];
 
 // Redirect jika tidak ada ID Reservasi
 if (!isset($_GET['id'])) {
@@ -18,7 +18,7 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$id_reservasi = mysqli_real_escape_string($conn, $_GET['id']);
+$id_reservasi = db_real_escape_string($conn, $_GET['id']);
 
 // Ambil data hasil pemeriksaan yang lama beserta data pasiennya
 $query_pemeriksaan = "SELECT h.*, r.no_antrian, p.nik, p.nama_lengkap, r.keluhan, j.id_dokter 
@@ -27,8 +27,8 @@ $query_pemeriksaan = "SELECT h.*, r.no_antrian, p.nik, p.nama_lengkap, r.keluhan
                       JOIN pasien p ON r.nik = p.nik
                       JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
                       WHERE h.id_reservasi = '$id_reservasi'";
-$result_pemeriksaan = mysqli_query($conn, $query_pemeriksaan);
-$data = mysqli_fetch_assoc($result_pemeriksaan);
+$result_pemeriksaan = db_query($conn, $query_pemeriksaan);
+$data = db_fetch_assoc($result_pemeriksaan);
 
 if (!$data) {
     // Jika tidak ditemukan hasil pemeriksaannya
@@ -52,14 +52,14 @@ if ($data['id_dokter'] != $id_dokter) {
 
 // PROSES UPDATE HASIL PEMERIKSAAN
 if (isset($_POST['update_pemeriksaan'])) {
-    $tekanan_darah  = mysqli_real_escape_string($conn, $_POST['tekanan_darah']);
-    $suhu_badan     = mysqli_real_escape_string($conn, $_POST['suhu_badan']);
-    $berat_badan    = mysqli_real_escape_string($conn, $_POST['berat_badan']);
-    $diagnosa       = mysqli_real_escape_string($conn, $_POST['diagnosa']);
-    $alergi_obat    = mysqli_real_escape_string($conn, $_POST['alergi_obat']);
-    $resep_obat     = mysqli_real_escape_string($conn, $_POST['resep_obat']);
-    $tindakan       = mysqli_real_escape_string($conn, $_POST['tindakan']);
-    $catatan_dokter = mysqli_real_escape_string($conn, $_POST['catatan_dokter']);
+    $tekanan_darah  = db_real_escape_string($conn, $_POST['tekanan_darah']);
+    $suhu_badan     = db_real_escape_string($conn, $_POST['suhu_badan']);
+    $berat_badan    = db_real_escape_string($conn, $_POST['berat_badan']);
+    $diagnosa       = db_real_escape_string($conn, $_POST['diagnosa']);
+    $alergi_obat    = db_real_escape_string($conn, $_POST['alergi_obat']);
+    $resep_obat     = db_real_escape_string($conn, $_POST['resep_obat']);
+    $tindakan       = db_real_escape_string($conn, $_POST['tindakan']);
+    $catatan_dokter = db_real_escape_string($conn, $_POST['catatan_dokter']);
 
     // Update tabel hasil_pemeriksaan
     $q_update = "UPDATE hasil_pemeriksaan 
@@ -73,12 +73,12 @@ if (isset($_POST['update_pemeriksaan'])) {
                      catatan_dokter = '$catatan_dokter'
                  WHERE id_reservasi = '$id_reservasi'";
     
-    if (mysqli_query($conn, $q_update)) {
+    if (db_query($conn, $q_update)) {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
         echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data Rekam Medis Berhasil Diubah!'}).then(() => { window.location='riwayat_medis.php?nik={$data['nik']}'; }); });</script>";
     } else {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
-        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal mengubah: " . mysqli_error($conn) . "'}); });</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal mengubah: " . db_error($conn) . "'}); });</script>";
     }
 }
 ?>

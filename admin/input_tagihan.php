@@ -13,10 +13,10 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$id_reservasi = mysqli_real_escape_string($conn, $_GET['id']);
+$id_reservasi = db_real_escape_string($conn, $_GET['id']);
 
 // ==========================================
-// KREDENSIAL MIDTRANS (Ganti dengan Key Anda sendiri)
+// KREDENSIAL MIDTRANS
 // ==========================================
 $server_key = 'YOUR_MIDTRANS_SERVER_KEY'; 
 $client_key = 'YOUR_MIDTRANS_CLIENT_KEY'; 
@@ -24,34 +24,34 @@ $client_key = 'YOUR_MIDTRANS_CLIENT_KEY';
 $snap_token = "";
 
 // Cek apakah data pembayaran untuk reservasi ini sudah ada atau belum
-$cek_bayar = mysqli_query($conn, "SELECT * FROM pembayaran WHERE id_reservasi = '$id_reservasi'");
-$is_bayar_exist = mysqli_num_rows($cek_bayar) > 0;
+$cek_bayar = db_query($conn, "SELECT * FROM pembayaran WHERE id_reservasi = '$id_reservasi'");
+$is_bayar_exist = db_num_rows($cek_bayar) > 0;
 
 // 1. PROSES BAYAR TUNAI (CASH)
 if (isset($_POST['simpan_tunai'])) {
-    $jumlah_bayar = mysqli_real_escape_string($conn, $_POST['jumlah_bayar']);
+    $jumlah_bayar = db_real_escape_string($conn, $_POST['jumlah_bayar']);
     
     // Logika INSERT atau UPDATE
     if ($is_bayar_exist) {
-        mysqli_query($conn, "UPDATE pembayaran SET jumlah_bayar = '$jumlah_bayar', metode_pembayaran = 'Tunai', status_pembayaran = 'Lunas' WHERE id_reservasi = '$id_reservasi'");
+        db_query($conn, "UPDATE pembayaran SET jumlah_bayar = '$jumlah_bayar', metode_pembayaran = 'Tunai', status_pembayaran = 'Lunas' WHERE id_reservasi = '$id_reservasi'");
     } else {
-        mysqli_query($conn, "INSERT INTO pembayaran (id_reservasi, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES ('$id_reservasi', '$jumlah_bayar', 'Tunai', 'Lunas')");
+        db_query($conn, "INSERT INTO pembayaran (id_reservasi, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES ('$id_reservasi', '$jumlah_bayar', 'Tunai', 'Lunas')");
     }
     
     // Ubah status antrian jadi selesai
-    mysqli_query($conn, "UPDATE reservasi SET status = 'Selesai' WHERE id_reservasi = '$id_reservasi'");
+    db_query($conn, "UPDATE reservasi SET status = 'Selesai' WHERE id_reservasi = '$id_reservasi'");
     $sukses = true;
 }
 
 // 2. PROSES BAYAR VIA MIDTRANS (QRIS/TRANSFER)
 if (isset($_POST['simpan_midtrans'])) {
-    $jumlah_bayar = mysqli_real_escape_string($conn, $_POST['jumlah_bayar']);
+    $jumlah_bayar = db_real_escape_string($conn, $_POST['jumlah_bayar']);
     
     // Logika INSERT atau UPDATE (Status masih Pending)
     if ($is_bayar_exist) {
-        mysqli_query($conn, "UPDATE pembayaran SET jumlah_bayar = '$jumlah_bayar', metode_pembayaran = 'Midtrans', status_pembayaran = 'Pending' WHERE id_reservasi = '$id_reservasi'");
+        db_query($conn, "UPDATE pembayaran SET jumlah_bayar = '$jumlah_bayar', metode_pembayaran = 'Midtrans', status_pembayaran = 'Pending' WHERE id_reservasi = '$id_reservasi'");
     } else {
-        mysqli_query($conn, "INSERT INTO pembayaran (id_reservasi, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES ('$id_reservasi', '$jumlah_bayar', 'Midtrans', 'Pending')");
+        db_query($conn, "INSERT INTO pembayaran (id_reservasi, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES ('$id_reservasi', '$jumlah_bayar', 'Midtrans', 'Pending')");
     }
 
     // Siapkan Payload Data untuk Midtrans
@@ -91,7 +91,7 @@ if (isset($_POST['simpan_midtrans'])) {
         $response = json_decode($result);
         if(isset($response->token)) {
             $snap_token = $response->token;
-            mysqli_query($conn, "UPDATE pembayaran SET snap_token = '$snap_token' WHERE id_reservasi = '$id_reservasi'");
+            db_query($conn, "UPDATE pembayaran SET snap_token = '$snap_token' WHERE id_reservasi = '$id_reservasi'");
         } else {
             $error = "Midtrans Error: " . (isset($response->error_messages[0]) ? $response->error_messages[0] : 'Gagal terhubung ke server Midtrans.');
         }
@@ -101,8 +101,8 @@ if (isset($_POST['simpan_midtrans'])) {
 
 // 3. CALLBACK KETIKA POPUP MIDTRANS BERHASIL DIBAYAR
 if (isset($_GET['aksi']) && $_GET['aksi'] == 'lunas_midtrans') {
-    mysqli_query($conn, "UPDATE pembayaran SET status_pembayaran = 'Lunas' WHERE id_reservasi = '$id_reservasi'");
-    mysqli_query($conn, "UPDATE reservasi SET status = 'Selesai' WHERE id_reservasi = '$id_reservasi'");
+    db_query($conn, "UPDATE pembayaran SET status_pembayaran = 'Lunas' WHERE id_reservasi = '$id_reservasi'");
+    db_query($conn, "UPDATE reservasi SET status = 'Selesai' WHERE id_reservasi = '$id_reservasi'");
     $sukses = true;
 }
 
@@ -113,7 +113,7 @@ $query_detail = "SELECT r.*, p.nama_lengkap, d.nama_dokter, d.spesialisasi
                  JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
                  JOIN dokter d ON j.id_dokter = d.id_dokter
                  WHERE r.id_reservasi = '$id_reservasi'";
-$data = mysqli_fetch_assoc(mysqli_query($conn, $query_detail));
+$data = db_fetch_assoc(db_query($conn, $query_detail));
 
 if (!$data) {
     echo "<html><body><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script><script>Swal.fire({icon: 'error', title: 'Gagal', text: 'Data reservasi tidak ditemukan!'}).then(() => { window.location='index.php'; });</script></body></html>";

@@ -139,11 +139,11 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
             <!-- Filter Poli -->
             <div class="d-flex flex-wrap justify-content-center gap-2">
                 <?php 
-                $filter_poli = isset($_GET['poli']) ? mysqli_real_escape_string($conn, $_GET['poli']) : '';
-                $q_poli = mysqli_query($conn, "SELECT DISTINCT spesialisasi FROM dokter ORDER BY spesialisasi ASC");
+                $filter_poli = isset($_GET['poli']) ? db_real_escape_string($conn, $_GET['poli']) : '';
+                $q_poli = db_query($conn, "SELECT DISTINCT spesialisasi FROM dokter ORDER BY spesialisasi ASC");
                 ?>
                 <a href="jadwal.php" style="border: 2px solid rgba(255,255,255,0.4);" class="btn px-4 rounded-pill fw-bold <?php echo ($filter_poli == '') ? 'btn-light text-dark' : 'text-white border'; ?>">Semua Poli</a>
-                <?php while($p = mysqli_fetch_assoc($q_poli)): 
+                <?php while($p = db_fetch_assoc($q_poli)): 
                     $is_active = ($filter_poli == $p['spesialisasi']);
                 ?>
                     <a href="jadwal.php?poli=<?php echo urlencode($p['spesialisasi']); ?>" 
@@ -161,17 +161,17 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
             if ($filter_poli !== '') {
                 $where_clause = "WHERE d.spesialisasi = '$filter_poli'";
             }
-            $q = mysqli_query($conn, "SELECT d.*, j.id_jadwal, j.hari, j.jam_mulai, j.jam_selesai 
+            $q = db_query($conn, "SELECT d.*, j.id_jadwal, j.hari, j.jam_mulai, j.jam_selesai 
                                      FROM dokter d 
                                      JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter
                                      $where_clause
                                      ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')");
             
-            if(mysqli_num_rows($q) == 0) {
+            if(db_num_rows($q) == 0) {
                 echo "<div class='col-12 text-center py-5'><i class='fas fa-calendar-times fa-3x mb-3 opacity-25'></i><p class='opacity-50'>Jadwal belum tersedia untuk saat ini.</p></div>";
             }
 
-            while($d = mysqli_fetch_assoc($q)) {
+            while($d = db_fetch_assoc($q)) {
             ?>
             <div class="col-md-6 col-lg-4">
                 <div class="doctor-card p-4 h-100 d-flex flex-column">

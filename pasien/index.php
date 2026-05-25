@@ -10,8 +10,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
 
 $id_user = $_SESSION['id_user'];
 $query = "SELECT * FROM pasien WHERE id_user = '$id_user'";
-$result = mysqli_query($conn, $query);
-$pasien = mysqli_fetch_assoc($result);
+$result = db_query($conn, $query);
+$pasien = db_fetch_assoc($result);
 
 $nama_sapaan = $pasien ? htmlspecialchars($pasien['nama_lengkap']) : htmlspecialchars($_SESSION['username']);
 $nik_pasien = $pasien['nik'];
@@ -23,8 +23,8 @@ $q_status = "SELECT r.*, d.nama_dokter, d.spesialisasi, j.hari
              JOIN dokter d ON j.id_dokter = d.id_dokter 
              WHERE r.nik = '$nik_pasien' AND r.status IN ('Menunggu', 'Dikonfirmasi')
              ORDER BY r.tanggal_kunjungan ASC LIMIT 1";
-$res_status = mysqli_query($conn, $q_status);
-$data_aktif = mysqli_fetch_assoc($res_status);
+$res_status = db_query($conn, $q_status);
+$data_aktif = db_fetch_assoc($res_status);
 ?>
 
 <!DOCTYPE html>

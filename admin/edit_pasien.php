@@ -6,36 +6,36 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../login.php"); exit;
 }
 
-$nik = isset($_GET['nik']) ? mysqli_real_escape_string($conn, $_GET['nik']) : '';
+$nik = isset($_GET['nik']) ? db_real_escape_string($conn, $_GET['nik']) : '';
 
 if(isset($_POST['update_pasien'])) {
-    $nama = mysqli_real_escape_string($conn, $_POST['nama']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
-    $hp = mysqli_real_escape_string($conn, $_POST['no_hp']);
-    $jk = mysqli_real_escape_string($conn, $_POST['jenis_kelamin']);
-    $tgl_lahir = mysqli_real_escape_string($conn, $_POST['tanggal_lahir']);
-    $alamat = mysqli_real_escape_string($conn, $_POST['alamat']);
+    $nama = db_real_escape_string($conn, $_POST['nama']);
+    $email = db_real_escape_string($conn, $_POST['email']);
+    $hp = db_real_escape_string($conn, $_POST['no_hp']);
+    $jk = db_real_escape_string($conn, $_POST['jenis_kelamin']);
+    $tgl_lahir = db_real_escape_string($conn, $_POST['tanggal_lahir']);
+    $alamat = db_real_escape_string($conn, $_POST['alamat']);
     
     // Update data pasien (tanpa NIK, karena NIK permanen)
-    mysqli_query($conn, "UPDATE pasien SET nama_lengkap='$nama', email='$email', no_hp='$hp', jenis_kelamin='$jk', tanggal_lahir='$tgl_lahir', alamat='$alamat' WHERE nik='$nik'");
+    db_query($conn, "UPDATE pasien SET nama_lengkap='$nama', email='$email', no_hp='$hp', jenis_kelamin='$jk', tanggal_lahir='$tgl_lahir', alamat='$alamat' WHERE nik='$nik'");
     
     // Update data user terkait
-    $q_usr = mysqli_query($conn, "SELECT id_user FROM pasien WHERE nik='$nik'");
-    if(mysqli_num_rows($q_usr) > 0) {
-        $id_u = mysqli_fetch_assoc($q_usr)['id_user'];
-        mysqli_query($conn, "UPDATE users SET email='$email' WHERE id_user='$id_u'");
+    $q_usr = db_query($conn, "SELECT id_user FROM pasien WHERE nik='$nik'");
+    if(db_num_rows($q_usr) > 0) {
+        $id_u = db_fetch_assoc($q_usr)['id_user'];
+        db_query($conn, "UPDATE users SET email='$email' WHERE id_user='$id_u'");
     }
     
     echo "<script>alert('Data pasien berhasil diperbarui!'); window.location.href='pasien.php';</script>";
     exit;
 }
 
-$q_pas = mysqli_query($conn, "SELECT * FROM pasien WHERE nik = '$nik'");
-if(mysqli_num_rows($q_pas) == 0) {
+$q_pas = db_query($conn, "SELECT * FROM pasien WHERE nik = '$nik'");
+if(db_num_rows($q_pas) == 0) {
     echo "<script>alert('Pasien tidak ditemukan!'); window.location.href='pasien.php';</script>";
     exit;
 }
-$pas = mysqli_fetch_assoc($q_pas);
+$pas = db_fetch_assoc($q_pas);
 ?>
 <!DOCTYPE html>
 <html lang="id">

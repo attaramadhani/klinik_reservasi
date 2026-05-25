@@ -8,25 +8,25 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_dokter = mysqli_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
-$id_dokter = mysqli_fetch_assoc($q_dokter)['id_dokter'];
+$q_dokter = db_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
+$id_dokter = db_fetch_assoc($q_dokter)['id_dokter'];
 
 if (isset($_POST['simpan'])) {
-    $hari = mysqli_real_escape_string($conn, $_POST['hari']);
-    $mulai = mysqli_real_escape_string($conn, $_POST['jam_mulai']);
-    $selesai = mysqli_real_escape_string($conn, $_POST['jam_selesai']);
+    $hari = db_real_escape_string($conn, $_POST['hari']);
+    $mulai = db_real_escape_string($conn, $_POST['jam_mulai']);
+    $selesai = db_real_escape_string($conn, $_POST['jam_selesai']);
     $kuota = (int) $_POST['kuota']; 
 
     // Simpan jadwal langsung menggunakan ID Dokter yang sedang login
     $query = "INSERT INTO jadwal_dokter (id_dokter, hari, jam_mulai, jam_selesai, kuota) 
               VALUES ('$id_dokter', '$hari', '$mulai', '$selesai', '$kuota')";
     
-    if(mysqli_query($conn, $query)) {
+    if(db_query($conn, $query)) {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
         echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'success', title: 'Berhasil', text: 'Jadwal Berhasil Ditambahkan!'}).then(() => { window.location='jadwal.php'; }); });</script>";
     } else {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
-        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal menyimpan: " . mysqli_error($conn) . "'}); });</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal menyimpan: " . db_error($conn) . "'}); });</script>";
     }
 }
 ?>

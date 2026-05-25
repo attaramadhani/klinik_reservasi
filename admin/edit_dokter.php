@@ -11,34 +11,34 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 // 1. Ambil data lama berdasarkan ID di URL
 if (!isset($_GET['id'])) { header("Location: dokter.php"); exit; }
 
-$id_dokter = mysqli_real_escape_string($conn, $_GET['id']);
+$id_dokter = db_real_escape_string($conn, $_GET['id']);
 $query = "SELECT d.*, u.username, u.email FROM dokter d 
           JOIN users u ON d.id_user = u.id_user 
           WHERE d.id_dokter = '$id_dokter'";
-$result = mysqli_query($conn, $query);
-$data = mysqli_fetch_assoc($result);
+$result = db_query($conn, $query);
+$data = db_fetch_assoc($result);
 
 // Jika ID tidak ditemukan
 if (!$data) { echo "Data tidak ditemukan!"; exit; }
 
 // 2. Proses Update saat tombol ditekan
 if (isset($_POST['update'])) {
-    $nama = mysqli_real_escape_string($conn, $_POST['nama']);
-    $spesialisasi = mysqli_real_escape_string($conn, $_POST['spesialisasi']);
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $nama = db_real_escape_string($conn, $_POST['nama']);
+    $spesialisasi = db_real_escape_string($conn, $_POST['spesialisasi']);
+    $username = db_real_escape_string($conn, $_POST['username']);
+    $email = db_real_escape_string($conn, $_POST['email']);
     $id_user = $data['id_user'];
 
     // Update tabel Dokter
-    $u1 = mysqli_query($conn, "UPDATE dokter SET nama_dokter='$nama', spesialisasi='$spesialisasi' WHERE id_dokter='$id_dokter'");
+    $u1 = db_query($conn, "UPDATE dokter SET nama_dokter='$nama', spesialisasi='$spesialisasi' WHERE id_dokter='$id_dokter'");
     
     // Update tabel Users (Username & Email)
-    $u2 = mysqli_query($conn, "UPDATE users SET username='$username', email='$email' WHERE id_user='$id_user'");
+    $u2 = db_query($conn, "UPDATE users SET username='$username', email='$email' WHERE id_user='$id_user'");
 
     // Logika Password: Hanya ganti jika diisi
     if (!empty($_POST['password'])) {
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-        mysqli_query($conn, "UPDATE users SET password='$password' WHERE id_user='$id_user'");
+        db_query($conn, "UPDATE users SET password='$password' WHERE id_user='$id_user'");
     }
 
     if ($u1 && $u2) {

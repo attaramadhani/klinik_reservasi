@@ -10,13 +10,13 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 
 $id_user = $_SESSION['id_user'];
 // Ambil ID Dokter
-$q_dokter = mysqli_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
-$dokter = mysqli_fetch_assoc($q_dokter);
+$q_dokter = db_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
+$dokter = db_fetch_assoc($q_dokter);
 $id_dokter = $dokter['id_dokter'];
 
 // Proses Konfirmasi (Terima/Tolak)
 if (isset($_GET['aksi']) && isset($_GET['id_res'])) {
-    $id_res = mysqli_real_escape_string($conn, $_GET['id_res']);
+    $id_res = db_real_escape_string($conn, $_GET['id_res']);
     
     // Perbaikan baris 20: Pastikan sintaks if/else benar
     if ($_GET['aksi'] == 'terima') {
@@ -25,7 +25,7 @@ if (isset($_GET['aksi']) && isset($_GET['id_res'])) {
         $status_baru = 'Ditolak';
     }
 
-    $update = mysqli_query($conn, "UPDATE reservasi SET status = '$status_baru' WHERE id_reservasi = '$id_res'");
+    $update = db_query($conn, "UPDATE reservasi SET status = '$status_baru' WHERE id_reservasi = '$id_res'");
     
     if ($update) {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
@@ -72,18 +72,18 @@ if (isset($_GET['aksi']) && isset($_GET['id_res'])) {
                 </thead>
                 <tbody>
                     <?php
-                    $q_res = mysqli_query($conn, "SELECT r.*, p.nama_lengkap, j.hari, j.jam_mulai 
+                    $q_res = db_query($conn, "SELECT r.*, p.nama_lengkap, j.hari, j.jam_mulai 
                                                   FROM reservasi r 
                                                   JOIN pasien p ON r.nik = p.nik 
                                                   JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal 
                                                   WHERE j.id_dokter = '$id_dokter' AND r.status = 'Menunggu' 
                                                   ORDER BY r.id_reservasi ASC");
 
-                    if(mysqli_num_rows($q_res) == 0) {
+                    if(db_num_rows($q_res) == 0) {
                         echo "<tr><td colspan='5' class='text-center py-5 text-muted'>Tidak ada reservasi baru yang menunggu konfirmasi.</td></tr>";
                     }
 
-                    while($r = mysqli_fetch_assoc($q_res)):
+                    while($r = db_fetch_assoc($q_res)):
                     ?>
                     <tr>
                         <td class="ps-4 fw-bold text-primary">#<?php echo $r['no_antrian']; ?></td>

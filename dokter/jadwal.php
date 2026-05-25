@@ -10,8 +10,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 
 $id_user = $_SESSION['id_user'];
 // Ambil ID Dokter berdasarkan user yang login
-$q_dokter = mysqli_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
-$dokter = mysqli_fetch_assoc($q_dokter);
+$q_dokter = db_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
+$dokter = db_fetch_assoc($q_dokter);
 $id_dokter = $dokter['id_dokter'];
 ?>
 
@@ -64,10 +64,10 @@ $id_dokter = $dokter['id_dokter'];
                     $query = "SELECT * FROM jadwal_dokter 
                               WHERE id_dokter = '$id_dokter' 
                               ORDER BY FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')";
-                    $result = mysqli_query($conn, $query);
+                    $result = db_query($conn, $query);
 
-                    if(mysqli_num_rows($result) > 0) {
-                        while($row = mysqli_fetch_assoc($result)) {
+                    if(db_num_rows($result) > 0) {
+                        while($row = db_fetch_assoc($result)) {
                     ?>
                     <tr>
                         <td class="ps-3"><span class="badge-hari"><?php echo $row['hari']; ?></span></td>

@@ -9,14 +9,14 @@ if (isset($_POST['old_pass'])) {
     $new_pass = $_POST['new_pass'];
 
     // 1. Ambil password lama dari database
-    $query = mysqli_query($conn, "SELECT password FROM users WHERE id_user = '$id_user'");
-    $data  = mysqli_fetch_assoc($query);
+    $query = db_query($conn, "SELECT password FROM users WHERE id_user = '$id_user'");
+    $data  = db_fetch_assoc($query);
 
     // 2. Verifikasi password lama
     if (password_verify($old_pass, $data['password'])) {
         // 3. Hash password baru dan update
         $hash_baru = password_hash($new_pass, PASSWORD_DEFAULT);
-        $update = mysqli_query($conn, "UPDATE users SET password = '$hash_baru' WHERE id_user = '$id_user'");
+        $update = db_query($conn, "UPDATE users SET password = '$hash_baru' WHERE id_user = '$id_user'");
 
         if ($update) {
             echo "<!DOCTYPE html><html><head><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script></head><body><script>

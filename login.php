@@ -13,14 +13,14 @@ $login_berhasil = false;
 $redirect_url = "";
 
 if (isset($_POST['login'])) {
-    $input = mysqli_real_escape_string($conn, $_POST['username']); 
+    $input = db_real_escape_string($conn, $_POST['username']); 
     $password = $_POST['password'];
 
     $query = "SELECT * FROM users WHERE username = '$input' OR email = '$input'";
-    $result = mysqli_query($conn, $query);
+    $result = db_query($conn, $query);
 
-    if (mysqli_num_rows($result) === 1) {
-        $row = mysqli_fetch_assoc($result);
+    if (db_num_rows($result) === 1) {
+        $row = db_fetch_assoc($result);
         
         if (password_verify($password, $row['password'])) {
             // PERBAIKAN: Paksa role menjadi huruf kecil agar pas dengan nama folder

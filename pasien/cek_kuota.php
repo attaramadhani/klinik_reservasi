@@ -9,8 +9,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
 }
 
 if (isset($_POST['id_jadwal']) && isset($_POST['tanggal'])) {
-    $id_jadwal = mysqli_real_escape_string($conn, $_POST['id_jadwal']);
-    $tanggal = mysqli_real_escape_string($conn, $_POST['tanggal']);
+    $id_jadwal = db_real_escape_string($conn, $_POST['id_jadwal']);
+    $tanggal = db_real_escape_string($conn, $_POST['tanggal']);
     
     // Jika tanggal kosong
     if(empty($tanggal)) {
@@ -27,9 +27,9 @@ if (isset($_POST['id_jadwal']) && isset($_POST['tanggal'])) {
     $hari_pilihan = $hari_indo[$nama_hari_inggris];
 
     // Ambil kuota maksimal dan hari jadwal
-    $q_jadwal = mysqli_query($conn, "SELECT hari, kuota FROM jadwal_dokter WHERE id_jadwal = '$id_jadwal'");
-    if (mysqli_num_rows($q_jadwal) > 0) {
-        $d_jadwal = mysqli_fetch_assoc($q_jadwal);
+    $q_jadwal = db_query($conn, "SELECT hari, kuota FROM jadwal_dokter WHERE id_jadwal = '$id_jadwal'");
+    if (db_num_rows($q_jadwal) > 0) {
+        $d_jadwal = db_fetch_assoc($q_jadwal);
         
         if ($d_jadwal['hari'] != $hari_pilihan) {
             echo json_encode(['status' => 'error', 'pesan' => "Jadwal dokter ini hanya ada di hari " . $d_jadwal['hari'] . "."]);
@@ -37,12 +37,12 @@ if (isset($_POST['id_jadwal']) && isset($_POST['tanggal'])) {
         }
 
         // Hitung jumlah pasien yang sudah mendaftar
-        $q_terdaftar = mysqli_query($conn, "SELECT COUNT(id_reservasi) as total_terdaftar 
+        $q_terdaftar = db_query($conn, "SELECT COUNT(id_reservasi) as total_terdaftar 
                                             FROM reservasi 
                                             WHERE id_jadwal = '$id_jadwal' 
                                             AND tanggal_kunjungan = '$tanggal' 
                                             AND status != 'Ditolak'");
-        $d_terdaftar = mysqli_fetch_assoc($q_terdaftar);
+        $d_terdaftar = db_fetch_assoc($q_terdaftar);
         $terdaftar = $d_terdaftar['total_terdaftar'];
         $kuota_maksimal = $d_jadwal['kuota'];
         

@@ -10,14 +10,14 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 
 // LOGIKA AKSI CEPAT (Konfirmasi / Tolak Antrian)
 if (isset($_GET['aksi']) && isset($_GET['id'])) {
-    $id_res = mysqli_real_escape_string($conn, $_GET['id']);
+    $id_res = db_real_escape_string($conn, $_GET['id']);
     $aksi = $_GET['aksi'];
 
     if ($aksi == 'konfirmasi') {
-        mysqli_query($conn, "UPDATE reservasi SET status = 'Dikonfirmasi' WHERE id_reservasi = '$id_res'");
+        db_query($conn, "UPDATE reservasi SET status = 'Dikonfirmasi' WHERE id_reservasi = '$id_res'");
         $pesan_sukses = "Antrian berhasil dikonfirmasi!";
     } elseif ($aksi == 'tolak') {
-        mysqli_query($conn, "UPDATE reservasi SET status = 'Ditolak' WHERE id_reservasi = '$id_res'");
+        db_query($conn, "UPDATE reservasi SET status = 'Ditolak' WHERE id_reservasi = '$id_res'");
         $pesan_sukses = "Antrian telah ditolak.";
     }
 }
@@ -73,15 +73,15 @@ if (isset($_GET['aksi']) && isset($_GET['id'])) {
                 <tbody>
                     <?php
                     // Ambil seluruh data reservasi
-                    $q = mysqli_query($conn, "SELECT r.*, p.nama_lengkap, d.nama_dokter, d.spesialisasi 
+                    $q = db_query($conn, "SELECT r.*, p.nama_lengkap, d.nama_dokter, d.spesialisasi 
                                              FROM reservasi r 
                                              JOIN pasien p ON r.nik = p.nik
                                              JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
                                              JOIN dokter d ON j.id_dokter = d.id_dokter
                                              ORDER BY r.tanggal_kunjungan DESC, r.no_antrian ASC");
                     
-                    if (mysqli_num_rows($q) > 0) {
-                        while($row = mysqli_fetch_assoc($q)):
+                    if (db_num_rows($q) > 0) {
+                        while($row = db_fetch_assoc($q)):
                             // Tentukan warna badge status
                             $bg = 'bg-secondary';
                             if($row['status'] == 'Menunggu') $bg = 'bg-warning text-dark';

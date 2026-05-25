@@ -9,12 +9,12 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_dokter = mysqli_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
-$id_dokter = mysqli_fetch_assoc($q_dokter)['id_dokter'];
+$q_dokter = db_query($conn, "SELECT id_dokter FROM dokter WHERE id_user = '$id_user'");
+$id_dokter = db_fetch_assoc($q_dokter)['id_dokter'];
 
 // Ambil semua data pasien yang pernah diperiksa oleh dokter ini atau semua pasien
 // Untuk rekam medis, dokter sebaiknya bisa mencari semua pasien
-$search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+$search = isset($_GET['search']) ? db_real_escape_string($conn, $_GET['search']) : '';
 
 $query_pasien = "SELECT DISTINCT p.* 
                  FROM pasien p 
@@ -26,18 +26,18 @@ if ($search != '') {
 }
 
 $query_pasien .= " ORDER BY p.nama_lengkap ASC";
-$result_pasien = mysqli_query($conn, $query_pasien);
+$result_pasien = db_query($conn, $query_pasien);
 
 // Jika ada pasien yang dipilih untuk dilihat riwayatnya
 $pasien_terpilih = null;
 $riwayat_medis = null;
 
 if (isset($_GET['nik'])) {
-    $nik_pasien_aktif = mysqli_real_escape_string($conn, $_GET['nik']);
+    $nik_pasien_aktif = db_real_escape_string($conn, $_GET['nik']);
     
     // Ambil detail pasien
-    $q_detail = mysqli_query($conn, "SELECT * FROM pasien WHERE nik = '$nik_pasien_aktif'");
-    $pasien_terpilih = mysqli_fetch_assoc($q_detail);
+    $q_detail = db_query($conn, "SELECT * FROM pasien WHERE nik = '$nik_pasien_aktif'");
+    $pasien_terpilih = db_fetch_assoc($q_detail);
     
     // Ambil histori pemeriksaannya, urutkan dari yang terbaru
     $q_riwayat = "SELECT h.*, r.tanggal_kunjungan, d.nama_dokter, d.spesialisasi, j.id_dokter 
@@ -47,7 +47,7 @@ if (isset($_GET['nik'])) {
                   JOIN dokter d ON j.id_dokter = d.id_dokter
                   WHERE r.nik = '$nik_pasien_aktif' AND r.status = 'Selesai'
                   ORDER BY r.tanggal_kunjungan DESC";
-    $riwayat_medis = mysqli_query($conn, $q_riwayat);
+    $riwayat_medis = db_query($conn, $q_riwayat);
 }
 ?>
 
@@ -102,11 +102,11 @@ if (isset($_GET['nik'])) {
                 
                 <div>
                     <?php
-                    if(mysqli_num_rows($result_pasien) == 0) {
+                    if(db_num_rows($result_pasien) == 0) {
                         echo "<div class='p-4 text-center text-muted small'>Tidak ada pasien ditemukan.</div>";
                     }
 
-                    while($p = mysqli_fetch_assoc($result_pasien)):
+                    while($p = db_fetch_assoc($result_pasien)):
                         $is_active = (isset($_GET['nik']) && $_GET['nik'] == $p['nik']) ? 'active' : '';
                     ?>
                     <a href="?nik=<?php echo $p['nik']; ?>&search=<?php echo urlencode($search); ?>" class="patient-item <?php echo $is_active; ?>">
@@ -156,8 +156,8 @@ if (isset($_GET['nik'])) {
                 <h5 class="fw-bold mb-4"><i class="fas fa-history me-2 text-success"></i> Histori Kunjungan</h5>
 
                 <?php 
-                if ($riwayat_medis && mysqli_num_rows($riwayat_medis) > 0) {
-                    while($h = mysqli_fetch_assoc($riwayat_medis)) {
+                if ($riwayat_medis && db_num_rows($riwayat_medis) > 0) {
+                    while($h = db_fetch_assoc($riwayat_medis)) {
                 ?>
                 
                 <div class="timeline-item">

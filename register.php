@@ -13,16 +13,16 @@ $registrasi_berhasil = false;
 
 if (isset($_POST['register'])) {
     // 1. Sanitasi Input (Mencegah karakter berbahaya)
-    $nama     = mysqli_real_escape_string($conn, $_POST['nama']);
+    $nama     = db_real_escape_string($conn, $_POST['nama']);
     // PERBAIKAN: Tangkap input NIK dan Biodata Lengkap
-    $nik      = mysqli_real_escape_string($conn, $_POST['nik']);
-    $jenis_kelamin = mysqli_real_escape_string($conn, $_POST['jenis_kelamin']);
-    $tanggal_lahir = mysqli_real_escape_string($conn, $_POST['tanggal_lahir']);
-    $alamat   = mysqli_real_escape_string($conn, $_POST['alamat']);
+    $nik      = db_real_escape_string($conn, $_POST['nik']);
+    $jenis_kelamin = db_real_escape_string($conn, $_POST['jenis_kelamin']);
+    $tanggal_lahir = db_real_escape_string($conn, $_POST['tanggal_lahir']);
+    $alamat   = db_real_escape_string($conn, $_POST['alamat']);
     
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $email    = mysqli_real_escape_string($conn, $_POST['email']);
-    $hp       = mysqli_real_escape_string($conn, $_POST['hp']);
+    $username = db_real_escape_string($conn, $_POST['username']);
+    $email    = db_real_escape_string($conn, $_POST['email']);
+    $hp       = db_real_escape_string($conn, $_POST['hp']);
     $pass1    = $_POST['password'];
     $pass2    = $_POST['konfirmasi_password'];
     $role     = 'pasien';
@@ -44,14 +44,14 @@ if (isset($_POST['register'])) {
         $pesan_error = "Konfirmasi password tidak cocok!";
     } else {
         // 3. Cek apakah Username atau Email sudah terpakai
-        $cek = mysqli_query($conn, "SELECT * FROM users WHERE username = '$username' OR email = '$email'");
+        $cek = db_query($conn, "SELECT * FROM users WHERE username = '$username' OR email = '$email'");
         
         // PERBAIKAN: Cek juga apakah NIK sudah pernah didaftarkan
-        $cek_nik = mysqli_query($conn, "SELECT * FROM pasien WHERE nik = '$nik'");
+        $cek_nik = db_query($conn, "SELECT * FROM pasien WHERE nik = '$nik'");
 
-        if (mysqli_num_rows($cek) > 0) {
+        if (db_num_rows($cek) > 0) {
             $pesan_error = "Username atau Email sudah terdaftar! Gunakan yang lain.";
-        } else if (mysqli_num_rows($cek_nik) > 0) {
+        } else if (db_num_rows($cek_nik) > 0) {
             $pesan_error = "NIK ini sudah terdaftar! Satu NIK hanya untuk satu akun.";
         } else {
             // 4. Enkripsi Password (Hashing)
@@ -60,19 +60,19 @@ if (isset($_POST['register'])) {
             // 5. Insert ke tabel USERS
             $queryUser = "INSERT INTO users (username, email, password, role) VALUES ('$username', '$email', '$password_hash', '$role')";
             
-            if (mysqli_query($conn, $queryUser)) {
-                $id_user = mysqli_insert_id($conn); // Ambil ID yang baru dibuat
+            if (db_query($conn, $queryUser)) {
+                $id_user = db_insert_id($conn); // Ambil ID yang baru dibuat
 
                 // 6. Insert ke tabel PASIEN (PERBAIKAN: Tambahkan NIK dan Biodata lainnya)
                 $queryPasien = "INSERT INTO pasien (id_user, nik, nama_lengkap, jenis_kelamin, tanggal_lahir, alamat, email, no_hp) VALUES ('$id_user', '$nik', '$nama', '$jenis_kelamin', '$tanggal_lahir', '$alamat', '$email', '$hp')";
                 
-                if (mysqli_query($conn, $queryPasien)) {
+                if (db_query($conn, $queryPasien)) {
                     $registrasi_berhasil = true;
                 } else {
-                    $pesan_error = "Gagal menyimpan data profil: " . mysqli_error($conn);
+                    $pesan_error = "Gagal menyimpan data profil: " . db_error($conn);
                 }
             } else {
-                $pesan_error = "Gagal membuat akun: " . mysqli_error($conn);
+                $pesan_error = "Gagal membuat akun: " . db_error($conn);
             }
         }
     }

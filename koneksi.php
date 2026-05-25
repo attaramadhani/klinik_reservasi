@@ -1,14 +1,8 @@
 <?php
-$host = getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: "127.0.0.1";
-$user = getenv('DB_USER') ?: getenv('MYSQLUSER') ?: "root";
-$pass = getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: "";
-$db   = getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: "klinik_reservasi";
-$port = (int) (getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: 3307);
-
-mysqli_report(MYSQLI_REPORT_OFF);
+require_once __DIR__ . '/db.php';
 
 // Melakukan koneksi ke database
-$conn = @mysqli_connect($host, $user, $pass, $db, $port);
+$conn = db_connect_from_env();
 
 // Cek jika koneksi gagal
 if (!$conn) {

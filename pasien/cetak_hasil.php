@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
     exit("ID Pemeriksaan tidak ditemukan."); 
 }
 
-$id_reservasi = mysqli_real_escape_string($conn, $_GET['id']);
+$id_reservasi = db_real_escape_string($conn, $_GET['id']);
 $id_user = $_SESSION['id_user'];
 
 // Tarik data HANYA 1 ID Reservasi
@@ -23,8 +23,8 @@ $query = "SELECT h.*, r.tanggal_kunjungan, r.no_antrian, d.nama_dokter, d.spesia
           JOIN pasien p ON r.nik = p.nik
           WHERE h.id_reservasi = '$id_reservasi' AND p.id_user = '$id_user' AND r.status = 'Selesai'";
 
-$result = mysqli_query($conn, $query);
-$data = mysqli_fetch_assoc($result);
+$result = db_query($conn, $query);
+$data = db_fetch_assoc($result);
 
 if (!$data) {
     exit("Data tidak ditemukan atau belum lunas."); 

@@ -9,8 +9,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_pasien = mysqli_query($conn, "SELECT nik FROM pasien WHERE id_user = '$id_user'");
-$d_pasien = mysqli_fetch_assoc($q_pasien);
+$q_pasien = db_query($conn, "SELECT nik FROM pasien WHERE id_user = '$id_user'");
+$d_pasien = db_fetch_assoc($q_pasien);
 $nik_pasien = $d_pasien['nik'];
 ?>
 
@@ -60,9 +60,9 @@ $nik_pasien = $d_pasien['nik'];
                           WHERE r.nik = '$nik_pasien' AND r.status = 'Selesai'
                           ORDER BY r.tanggal_kunjungan DESC"; 
                 
-                $q = mysqli_query($conn, $query);
+                $q = db_query($conn, $query);
 
-                if(mysqli_num_rows($q) == 0) {
+                if(db_num_rows($q) == 0) {
                     echo "<div class='card result-card p-5 text-center'>
                             <i class='fas fa-file-medical fa-3x text-muted mb-3'></i>
                             <h5 class='text-muted'>Belum ada riwayat medis yang tersedia.</h5>
@@ -70,7 +70,7 @@ $nik_pasien = $d_pasien['nik'];
                           </div>";
                 }
 
-                while($h = mysqli_fetch_assoc($q)) {
+                while($h = db_fetch_assoc($q)) {
                 ?>
                 <div class="card result-card p-4 mb-4 bg-white">
                     <div class="row align-items-center">

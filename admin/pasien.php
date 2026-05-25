@@ -45,8 +45,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                 </thead>
                 <tbody>
                     <?php
-                    $q = mysqli_query($conn, "SELECT * FROM pasien JOIN users ON pasien.id_user = users.id_user ORDER BY pasien.nik ASC");
-                    while($row = mysqli_fetch_assoc($q)):
+                    $q = db_query($conn, "SELECT * FROM pasien JOIN users ON pasien.id_user = users.id_user ORDER BY pasien.nik ASC");
+                    while($row = db_fetch_assoc($q)):
                     ?>
                     <tr>
                         <td class="fw-bold"><?php echo $row['nik']; ?></td>

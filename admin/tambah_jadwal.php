@@ -8,10 +8,10 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 }
 
 if (isset($_POST['simpan'])) {
-    $id_dokter = mysqli_real_escape_string($conn, $_POST['id_dokter']);
-    $hari = mysqli_real_escape_string($conn, $_POST['hari']);
-    $mulai = mysqli_real_escape_string($conn, $_POST['jam_mulai']);
-    $selesai = mysqli_real_escape_string($conn, $_POST['jam_selesai']);
+    $id_dokter = db_real_escape_string($conn, $_POST['id_dokter']);
+    $hari = db_real_escape_string($conn, $_POST['hari']);
+    $mulai = db_real_escape_string($conn, $_POST['jam_mulai']);
+    $selesai = db_real_escape_string($conn, $_POST['jam_selesai']);
     
     // VARIABEL BARU: Tangkap input kuota
     $kuota = (int) $_POST['kuota']; 
@@ -20,12 +20,12 @@ if (isset($_POST['simpan'])) {
     $query = "INSERT INTO jadwal_dokter (id_dokter, hari, jam_mulai, jam_selesai, kuota) 
               VALUES ('$id_dokter', '$hari', '$mulai', '$selesai', '$kuota')";
     
-    if(mysqli_query($conn, $query)) {
+    if(db_query($conn, $query)) {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
         echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'success', title: 'Berhasil', text: 'Jadwal & Kuota Berhasil Ditambahkan!'}).then(() => { window.location='jadwal.php'; }); });</script>";
     } else {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
-        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal menyimpan: " . mysqli_error($conn) . "'}); });</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal menyimpan: " . db_error($conn) . "'}); });</script>";
     }
 }
 ?>
@@ -61,8 +61,8 @@ if (isset($_POST['simpan'])) {
                     <select name="id_dokter" class="form-select p-3 bg-light" required>
                         <option value="">-- Silakan Pilih --</option>
                         <?php
-                        $dr = mysqli_query($conn, "SELECT id_dokter, nama_dokter, spesialisasi FROM dokter ORDER BY nama_dokter ASC");
-                        while($d = mysqli_fetch_assoc($dr)) {
+                        $dr = db_query($conn, "SELECT id_dokter, nama_dokter, spesialisasi FROM dokter ORDER BY nama_dokter ASC");
+                        while($d = db_fetch_assoc($dr)) {
                             echo "<option value='{$d['id_dokter']}'>{$d['nama_dokter']} ({$d['spesialisasi']})</option>";
                         }
                         ?>

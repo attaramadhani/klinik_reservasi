@@ -9,25 +9,25 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 }
 
 if (isset($_POST['submit'])) {
-    $nama = mysqli_real_escape_string($conn, $_POST['nama']);
-    $spesialisasi = mysqli_real_escape_string($conn, $_POST['spesialisasi']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']); // Menambah variabel email
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $nama = db_real_escape_string($conn, $_POST['nama']);
+    $spesialisasi = db_real_escape_string($conn, $_POST['spesialisasi']);
+    $email = db_real_escape_string($conn, $_POST['email']); // Menambah variabel email
+    $username = db_real_escape_string($conn, $_POST['username']);
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT); 
 
     // 1. Simpan ke tabel USERS (Termasuk Email)
-    $q1 = mysqli_query($conn, "INSERT INTO users (username, password, email, role) VALUES ('$username', '$password', '$email', 'dokter')");
+    $q1 = db_query($conn, "INSERT INTO users (username, password, email, role) VALUES ('$username', '$password', '$email', 'dokter')");
     
     if ($q1) {
-        $id_user = mysqli_insert_id($conn);
+        $id_user = db_insert_id($conn);
         // 2. Simpan ke tabel DOKTER
-        mysqli_query($conn, "INSERT INTO dokter (id_user, nama_dokter, spesialisasi) VALUES ('$id_user', '$nama', '$spesialisasi')");
+        db_query($conn, "INSERT INTO dokter (id_user, nama_dokter, spesialisasi) VALUES ('$id_user', '$nama', '$spesialisasi')");
         
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
         echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'success', title: 'Berhasil', text: 'Dokter berhasil didaftarkan!'}).then(() => { window.location='dokter.php'; }); });</script>";
     } else {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
-        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal mendaftarkan dokter: " . mysqli_error($conn) . "'}); });</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal mendaftarkan dokter: " . db_error($conn) . "'}); });</script>";
     }
 }
 ?>

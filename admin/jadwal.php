@@ -55,10 +55,10 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                                   FROM jadwal_dokter j 
                                   JOIN dokter d ON j.id_dokter = d.id_dokter 
                                   ORDER BY FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')";
-                        $result = mysqli_query($conn, $query);
+                        $result = db_query($conn, $query);
 
-                        if(mysqli_num_rows($result) > 0) {
-                            while($row = mysqli_fetch_assoc($result)) {
+                        if(db_num_rows($result) > 0) {
+                            while($row = db_fetch_assoc($result)) {
                         ?>
                         <tr>
                             <td class="fw-bold text-dark ps-3"><?php echo htmlspecialchars($row['nama_dokter']); ?></td>

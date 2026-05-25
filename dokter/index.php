@@ -8,8 +8,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'dokter') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_dokter = mysqli_query($conn, "SELECT * FROM dokter WHERE id_user = '$id_user'");
-$dokter = mysqli_fetch_assoc($q_dokter);
+$q_dokter = db_query($conn, "SELECT * FROM dokter WHERE id_user = '$id_user'");
+$dokter = db_fetch_assoc($q_dokter);
 $id_dokter = $dokter['id_dokter'];
 
 // Mendapatkan nama hari ini dalam Bahasa Indonesia untuk filter jadwal
@@ -22,19 +22,19 @@ $hari_lokal = $daftar_hari[$hari_ini];
 
 // 1. Total Pasien Hari Ini (Berdasarkan Hari Praktik & Status Konfirmasi)
 // PERBAIKAN: Menggunakan j.hari karena kolom j.tanggal tidak ada
-$q_pasien_hari_ini = mysqli_query($conn, "SELECT COUNT(*) as total FROM reservasi r 
+$q_pasien_hari_ini = db_query($conn, "SELECT COUNT(*) as total FROM reservasi r 
                                           JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal 
                                           WHERE j.id_dokter = '$id_dokter' 
                                           AND j.hari = '$hari_lokal' 
                                           AND r.status = 'Dikonfirmasi'");
-$total_pasien_hari_ini = mysqli_fetch_assoc($q_pasien_hari_ini)['total'];
+$total_pasien_hari_ini = db_fetch_assoc($q_pasien_hari_ini)['total'];
 
 // 2. Menunggu Konfirmasi (Total semua reservasi baru yang belum direspon)
-$q_menunggu = mysqli_query($conn, "SELECT COUNT(*) as total FROM reservasi r 
+$q_menunggu = db_query($conn, "SELECT COUNT(*) as total FROM reservasi r 
                                    JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal 
                                    WHERE j.id_dokter = '$id_dokter' 
                                    AND r.status = 'Menunggu'");
-$menunggu_konfirmasi = mysqli_fetch_assoc($q_menunggu)['total'];
+$menunggu_konfirmasi = db_fetch_assoc($q_menunggu)['total'];
 ?>
 
 <!DOCTYPE html>

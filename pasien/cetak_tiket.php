@@ -13,7 +13,7 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$id_reservasi = mysqli_real_escape_string($conn, $_GET['id']);
+$id_reservasi = db_real_escape_string($conn, $_GET['id']);
 $id_user = $_SESSION['id_user'];
 
 // Query Gabungan: Menarik data Reservasi, Dokter, Pasien, DAN Pembayaran
@@ -27,8 +27,8 @@ $query = "SELECT r.*, j.hari, j.jam_mulai, j.jam_selesai, d.nama_dokter, d.spesi
           LEFT JOIN pembayaran b ON r.id_reservasi = b.id_reservasi
           WHERE r.id_reservasi = '$id_reservasi' AND p.id_user = '$id_user'";
 
-$result = mysqli_query($conn, $query);
-$data = mysqli_fetch_assoc($result);
+$result = db_query($conn, $query);
+$data = db_fetch_assoc($result);
 
 if (!$data) {
     echo "Data tiket tidak valid atau Anda tidak memiliki akses."; 

@@ -9,17 +9,17 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_pasien = mysqli_query($conn, "SELECT nik FROM pasien WHERE id_user = '$id_user'");
-$d_pasien = mysqli_fetch_assoc($q_pasien);
+$q_pasien = db_query($conn, "SELECT nik FROM pasien WHERE id_user = '$id_user'");
+$d_pasien = db_fetch_assoc($q_pasien);
 $nik_pasien = $d_pasien['nik'];
 
 // LOGIKA PEMBATALAN RESERVASI
 if (isset($_GET['aksi']) && $_GET['aksi'] == 'batal' && isset($_GET['id'])) {
-    $id_reservasi = mysqli_real_escape_string($conn, $_GET['id']);
-    $cek_milik = mysqli_query($conn, "SELECT * FROM reservasi WHERE id_reservasi='$id_reservasi' AND nik='$nik_pasien' AND status='Menunggu'");
+    $id_reservasi = db_real_escape_string($conn, $_GET['id']);
+    $cek_milik = db_query($conn, "SELECT * FROM reservasi WHERE id_reservasi='$id_reservasi' AND nik='$nik_pasien' AND status='Menunggu'");
     
-    if (mysqli_num_rows($cek_milik) > 0) {
-        $hapus = mysqli_query($conn, "DELETE FROM reservasi WHERE id_reservasi='$id_reservasi'");
+    if (db_num_rows($cek_milik) > 0) {
+        $hapus = db_query($conn, "DELETE FROM reservasi WHERE id_reservasi='$id_reservasi'");
         if ($hapus) {
             echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -91,10 +91,10 @@ if (isset($_GET['aksi']) && $_GET['aksi'] == 'batal' && isset($_GET['id'])) {
                   WHERE r.nik = '$nik_pasien' 
                   ORDER BY r.id_reservasi DESC"; 
         
-        $result = mysqli_query($conn, $query);
+        $result = db_query($conn, $query);
 
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
+        if (db_num_rows($result) > 0) {
+            while ($row = db_fetch_assoc($result)) {
                 $status_class = ""; $icon_status = "";
                 // PERBAIKAN: Tambahan Switch Case untuk Menunggu Pembayaran
                 switch($row['status']) {

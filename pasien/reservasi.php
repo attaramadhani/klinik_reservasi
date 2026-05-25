@@ -9,8 +9,8 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
 }
 
 $id_user = $_SESSION['id_user'];
-$q_pasien = mysqli_query($conn, "SELECT nik FROM pasien WHERE id_user = '$id_user'");
-$d_pasien = mysqli_fetch_assoc($q_pasien);
+$q_pasien = db_query($conn, "SELECT nik FROM pasien WHERE id_user = '$id_user'");
+$d_pasien = db_fetch_assoc($q_pasien);
 $nik_pasien_login = $d_pasien['nik'];
 
 // Baca id_jadwal dari URL (jika datang dari halaman jadwal)
@@ -19,11 +19,11 @@ $prefill_tanggal = '';
 $prefill_info = null;
 
 if ($prefill_jadwal > 0) {
-    $q_pf = mysqli_query($conn, "SELECT j.*, d.nama_dokter, d.spesialisasi 
+    $q_pf = db_query($conn, "SELECT j.*, d.nama_dokter, d.spesialisasi 
                                  FROM jadwal_dokter j 
                                  JOIN dokter d ON j.id_dokter = d.id_dokter 
                                  WHERE j.id_jadwal = '$prefill_jadwal'");
-    $prefill_info = mysqli_fetch_assoc($q_pf);
+    $prefill_info = db_fetch_assoc($q_pf);
 
     if ($prefill_info) {
         // Cari tanggal terdekat yang sesuai dengan hari praktek dokter
@@ -44,8 +44,8 @@ $reservasi_berhasil = false;
 $no_antrian_baru = 0;
 
 if (isset($_POST['buat_reservasi'])) {
-    $id_jadwal = mysqli_real_escape_string($conn, $_POST['id_jadwal']);
-    $tanggal   = mysqli_real_escape_string($conn, $_POST['tanggal']);
+    $id_jadwal = db_real_escape_string($conn, $_POST['id_jadwal']);
+    $tanggal   = db_real_escape_string($conn, $_POST['tanggal']);
     $keluhan   = htmlspecialchars($_POST['keluhan']);
 
     // 1. Validasi Hari
@@ -57,27 +57,27 @@ if (isset($_POST['buat_reservasi'])) {
     $hari_pilihan = $hari_indo[$nama_hari_inggris];
 
     // Ambil data jadwal beserta kuota maksimalnya
-    $cek_jadwal = mysqli_query($conn, "SELECT hari, kuota FROM jadwal_dokter WHERE id_jadwal = '$id_jadwal'");
-    $data_jadwal = mysqli_fetch_assoc($cek_jadwal);
+    $cek_jadwal = db_query($conn, "SELECT hari, kuota FROM jadwal_dokter WHERE id_jadwal = '$id_jadwal'");
+    $data_jadwal = db_fetch_assoc($cek_jadwal);
 
     if ($data_jadwal['hari'] != $hari_pilihan) {
         $pesan_error = "Dokter tidak praktek pada hari <b>$hari_pilihan</b>. <br>Jadwal dokter ini: <b>" . $data_jadwal['hari'] . "</b>.";
     } else {
         // 2. CEK RESERVASI AKTIF: Mencegah pasien mendaftar jika masih punya reservasi berjalan
-        $cek_aktif = mysqli_query($conn, "SELECT id_reservasi FROM reservasi 
+        $cek_aktif = db_query($conn, "SELECT id_reservasi FROM reservasi 
                                           WHERE nik = '$nik_pasien_login' 
                                           AND status IN ('Menunggu', 'Dikonfirmasi', 'Menunggu Pembayaran')");
         
-        if (mysqli_num_rows($cek_aktif) > 0) {
+        if (db_num_rows($cek_aktif) > 0) {
             $pesan_error = "Anda <b>sudah memiliki reservasi aktif</b> yang belum selesai. Silakan batalkan tiket lama di menu Riwayat jika ingin mendaftar ulang.";
         } else {
             // 3. CEK KUOTA: Hitung berapa pasien yang sudah mendaftar di tanggal & jadwal ini
-            $cek_jumlah_pasien = mysqli_query($conn, "SELECT COUNT(id_reservasi) as total_terdaftar 
+            $cek_jumlah_pasien = db_query($conn, "SELECT COUNT(id_reservasi) as total_terdaftar 
                                                       FROM reservasi 
                                                       WHERE id_jadwal = '$id_jadwal' 
                                                       AND tanggal_kunjungan = '$tanggal' 
                                                       AND status != 'Ditolak'");
-            $data_terdaftar = mysqli_fetch_assoc($cek_jumlah_pasien);
+            $data_terdaftar = db_fetch_assoc($cek_jumlah_pasien);
             $total_terdaftar = $data_terdaftar['total_terdaftar'];
             $kuota_maksimal = $data_jadwal['kuota'];
 
@@ -86,18 +86,18 @@ if (isset($_POST['buat_reservasi'])) {
                 $pesan_error = "Mohon maaf, <b>Jadwal Penuh</b>. <br>Kuota harian dokter ini sudah mencapai batas maksimal ($kuota_maksimal pasien). Silakan pilih tanggal atau jadwal lain.";
             } else {
                 // 4. Lolos Validasi Kuota -> Generate Nomor Antrian
-                $cek_antrian = mysqli_query($conn, "SELECT MAX(no_antrian) as antrian_terakhir FROM reservasi WHERE id_jadwal = '$id_jadwal' AND tanggal_kunjungan = '$tanggal'");
-                $data_antrian = mysqli_fetch_assoc($cek_antrian);
+                $cek_antrian = db_query($conn, "SELECT MAX(no_antrian) as antrian_terakhir FROM reservasi WHERE id_jadwal = '$id_jadwal' AND tanggal_kunjungan = '$tanggal'");
+                $data_antrian = db_fetch_assoc($cek_antrian);
                 $no_antrian_baru = (int)$data_antrian['antrian_terakhir'] + 1; // Pastikan konversi ke integer
 
                 // 5. Simpan ke Database
                 $query_simpan = "INSERT INTO reservasi (nik, id_jadwal, tanggal_kunjungan, keluhan, no_antrian, status) 
                                  VALUES ('$nik_pasien_login', '$id_jadwal', '$tanggal', '$keluhan', '$no_antrian_baru', 'Menunggu')";
                 
-                if (mysqli_query($conn, $query_simpan)) {
+                if (db_query($conn, $query_simpan)) {
                     $reservasi_berhasil = true;
                 } else {
-                    $pesan_error = "Gagal membuat reservasi: " . mysqli_error($conn);
+                    $pesan_error = "Gagal membuat reservasi: " . db_error($conn);
                 }
             }
         }
@@ -173,8 +173,8 @@ if (isset($_POST['buat_reservasi'])) {
                                                   FROM jadwal_dokter j 
                                                   JOIN dokter d ON j.id_dokter = d.id_dokter 
                                                   ORDER BY d.nama_dokter ASC";
-                                        $result = mysqli_query($conn, $query);
-                                        while ($row = mysqli_fetch_assoc($result)) {
+                                        $result = db_query($conn, $query);
+                                        while ($row = db_fetch_assoc($result)) {
                                             $jam = date('H:i', strtotime($row['jam_mulai'])) . " - " . date('H:i', strtotime($row['jam_selesai']));
                                             $selected = ($prefill_jadwal == $row['id_jadwal']) ? 'selected' : '';
                                             echo "<option value='{$row['id_jadwal']}' $selected>{$row['nama_dokter']} ({$row['spesialisasi']}) - {$row['hari']} | $jam (Maks. {$row['kuota']} Pasien)</option>";

@@ -9,29 +9,29 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 }
 
 // 1. Ambil Data Statistik
-$total_pasien = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM pasien"))['total'];
-$total_dokter = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM dokter"))['total'];
-$total_reservasi = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM reservasi"))['total'];
-$bayar_pending = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as total FROM pembayaran WHERE status_pembayaran = 'Pending'"))['total'];
+$total_pasien = db_fetch_assoc(db_query($conn, "SELECT COUNT(*) as total FROM pasien"))['total'];
+$total_dokter = db_fetch_assoc(db_query($conn, "SELECT COUNT(*) as total FROM dokter"))['total'];
+$total_reservasi = db_fetch_assoc(db_query($conn, "SELECT COUNT(*) as total FROM reservasi"))['total'];
+$bayar_pending = db_fetch_assoc(db_query($conn, "SELECT COUNT(*) as total FROM pembayaran WHERE status_pembayaran = 'Pending'"))['total'];
 
 // Hitung total pendapatan bulan ini
 $bulan_ini = date('Y-m');
-$query_pendapatan = mysqli_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
+$query_pendapatan = db_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
                                          FROM pembayaran b 
                                          JOIN reservasi r ON b.id_reservasi = r.id_reservasi 
                                          WHERE b.status_pembayaran = 'Lunas' 
                                          AND DATE_FORMAT(r.tanggal_kunjungan, '%Y-%m') = '$bulan_ini'");
-$pendapatan_bulan_ini = mysqli_fetch_assoc($query_pendapatan)['total_pendapatan'];
+$pendapatan_bulan_ini = db_fetch_assoc($query_pendapatan)['total_pendapatan'];
 $pendapatan_bulan_ini = $pendapatan_bulan_ini ? $pendapatan_bulan_ini : 0; // Jika null jadikan 0
 
 // Hitung total pendapatan tahun ini
 $tahun_ini = date('Y');
-$query_pendapatan_tahun = mysqli_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
+$query_pendapatan_tahun = db_query($conn, "SELECT SUM(b.jumlah_bayar) as total_pendapatan 
                                          FROM pembayaran b 
                                          JOIN reservasi r ON b.id_reservasi = r.id_reservasi 
                                          WHERE b.status_pembayaran = 'Lunas' 
                                          AND DATE_FORMAT(r.tanggal_kunjungan, '%Y') = '$tahun_ini'");
-$pendapatan_tahun_ini = mysqli_fetch_assoc($query_pendapatan_tahun)['total_pendapatan'];
+$pendapatan_tahun_ini = db_fetch_assoc($query_pendapatan_tahun)['total_pendapatan'];
 $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
 ?>
 
@@ -256,7 +256,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                                 <?php
                                 $bulan_ini = date('Y-m');
                                 
-                                $query_ranking = mysqli_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
+                                $query_ranking = db_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
                                                                          FROM dokter d 
                                                                          LEFT JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter 
                                                                          LEFT JOIN reservasi r ON j.id_jadwal = r.id_jadwal 
@@ -264,7 +264,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                                                                          GROUP BY d.id_dokter 
                                                                          ORDER BY total_reservasi DESC");
                                 $rank = 1;
-                                while($row_rank = mysqli_fetch_assoc($query_ranking)):
+                                while($row_rank = db_fetch_assoc($query_ranking)):
                                     $is_top = $rank == 1;
                                     $is_second = $rank == 2;
                                     $is_third = $rank == 3;
@@ -363,13 +363,13 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                     </thead>
                     <tbody>
                         <?php
-                        $q = mysqli_query($conn, "SELECT r.*, p.nama_lengkap, d.nama_dokter 
+                        $q = db_query($conn, "SELECT r.*, p.nama_lengkap, d.nama_dokter 
                                                  FROM reservasi r 
                                                  JOIN pasien p ON r.nik = p.nik
                                                  JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
                                                  JOIN dokter d ON j.id_dokter = d.id_dokter
                                                  ORDER BY r.id_reservasi DESC LIMIT 5");
-                        while($row = mysqli_fetch_assoc($q)):
+                        while($row = db_fetch_assoc($q)):
                         ?>
                         <tr>
                             <td class="ps-4"><span class="fw-800 text-muted">#<?php echo $row['no_antrian']; ?></span></td>

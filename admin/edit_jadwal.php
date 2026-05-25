@@ -14,12 +14,12 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$id_jadwal = mysqli_real_escape_string($conn, $_GET['id']);
+$id_jadwal = db_real_escape_string($conn, $_GET['id']);
 
 // Ambil data jadwal saat ini
 $query_data = "SELECT * FROM jadwal_dokter WHERE id_jadwal = '$id_jadwal'";
-$result_data = mysqli_query($conn, $query_data);
-$data = mysqli_fetch_assoc($result_data);
+$result_data = db_query($conn, $query_data);
+$data = db_fetch_assoc($result_data);
 
 // Jika jadwal tidak ditemukan
 if (!$data) {
@@ -29,22 +29,22 @@ if (!$data) {
 
 // Proses Update Data
 if (isset($_POST['update'])) {
-    $id_dokter = mysqli_real_escape_string($conn, $_POST['id_dokter']);
-    $hari = mysqli_real_escape_string($conn, $_POST['hari']);
-    $mulai = mysqli_real_escape_string($conn, $_POST['jam_mulai']);
-    $selesai = mysqli_real_escape_string($conn, $_POST['jam_selesai']);
+    $id_dokter = db_real_escape_string($conn, $_POST['id_dokter']);
+    $hari = db_real_escape_string($conn, $_POST['hari']);
+    $mulai = db_real_escape_string($conn, $_POST['jam_mulai']);
+    $selesai = db_real_escape_string($conn, $_POST['jam_selesai']);
     $kuota = (int) $_POST['kuota']; 
 
     $query_update = "UPDATE jadwal_dokter 
                      SET id_dokter = '$id_dokter', hari = '$hari', jam_mulai = '$mulai', jam_selesai = '$selesai', kuota = '$kuota' 
                      WHERE id_jadwal = '$id_jadwal'";
     
-    if(mysqli_query($conn, $query_update)) {
+    if(db_query($conn, $query_update)) {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
         echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'success', title: 'Berhasil', text: 'Jadwal Berhasil Diperbarui!'}).then(() => { window.location='jadwal.php'; }); });</script>";
     } else {
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
-        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal memperbarui jadwal: " . mysqli_error($conn) . "'}); });</script>";
+        echo "<script>document.addEventListener('DOMContentLoaded', function(){ Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal memperbarui jadwal: " . db_error($conn) . "'}); });</script>";
     }
 }
 ?>
@@ -82,8 +82,8 @@ if (isset($_POST['update'])) {
                     <select name="id_dokter" class="form-select" required>
                         <?php
                         $query_dokter = "SELECT * FROM dokter";
-                        $result_dokter = mysqli_query($conn, $query_dokter);
-                        while ($dokter = mysqli_fetch_assoc($result_dokter)) {
+                        $result_dokter = db_query($conn, $query_dokter);
+                        while ($dokter = db_fetch_assoc($result_dokter)) {
                             $selected = ($dokter['id_dokter'] == $data['id_dokter']) ? "selected" : "";
                             echo "<option value='{$dokter['id_dokter']}' $selected>{$dokter['nama_dokter']} - {$dokter['spesialis']}</option>";
                         }

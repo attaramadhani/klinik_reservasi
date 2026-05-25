@@ -54,12 +54,12 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                                     <?php
                                     // Inisialisasi nomor urut
                                     $no = 1;
-                                    $q = mysqli_query($conn, "SELECT d.*, u.username, u.email 
+                                    $q = db_query($conn, "SELECT d.*, u.username, u.email 
                                                              FROM dokter d 
                                                              JOIN users u ON d.id_user = u.id_user 
                                                              ORDER BY d.nama_dokter ASC");
                                     
-                                    while($d = mysqli_fetch_assoc($q)):
+                                    while($d = db_fetch_assoc($q)):
                                     ?>
                                     <tr>
                                         <td class="ps-4 fw-bold text-muted"><?php echo $no++; ?>.</td>
@@ -90,7 +90,7 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                                     </tr>
                                     <?php endwhile; ?>
                                     
-                                    <?php if(mysqli_num_rows($q) == 0): ?>
+                                    <?php if(db_num_rows($q) == 0): ?>
                                     <tr>
                                         <td colspan="6" class="text-center py-5 text-muted small">Data dokter tidak ditemukan.</td>
                                     </tr>
