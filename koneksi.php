@@ -1,11 +1,12 @@
 <?php
-$host = "127.0.0.1";
-$user = "root";
-$pass = ""; // Kosongkan jika menggunakan XAMPP default
-$db   = "klinik_reservasi"; // Pastikan nama ini SAMA PERSIS dengan database yang baru dibuat
+$host = getenv('DB_HOST') ?: getenv('MYSQLHOST') ?: "127.0.0.1";
+$user = getenv('DB_USER') ?: getenv('MYSQLUSER') ?: "root";
+$pass = getenv('DB_PASS') ?: getenv('MYSQLPASSWORD') ?: "";
+$db   = getenv('DB_NAME') ?: getenv('MYSQLDATABASE') ?: "klinik_reservasi";
+$port = (int) (getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: 3307);
 
 // Melakukan koneksi ke database
-$conn = mysqli_connect($host, $user, $pass, $db, 3307);
+$conn = mysqli_connect($host, $user, $pass, $db, $port);
 
 // Cek jika koneksi gagal
 if (!$conn) {
