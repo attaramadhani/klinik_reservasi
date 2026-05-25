@@ -8,7 +8,7 @@ $port = (int) (getenv('DB_PORT') ?: getenv('MYSQLPORT') ?: 3307);
 mysqli_report(MYSQLI_REPORT_OFF);
 
 // Melakukan koneksi ke database
-$conn = mysqli_connect($host, $user, $pass, $db, $port);
+$conn = @mysqli_connect($host, $user, $pass, $db, $port);
 
 // Cek jika koneksi gagal
 if (!$conn) {
