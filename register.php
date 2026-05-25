@@ -19,7 +19,7 @@ if (isset($_POST['register'])) {
     $jenis_kelamin = db_real_escape_string($conn, $_POST['jenis_kelamin']);
     $tanggal_lahir = db_real_escape_string($conn, $_POST['tanggal_lahir']);
     $alamat   = db_real_escape_string($conn, $_POST['alamat']);
-    
+
     $username = db_real_escape_string($conn, $_POST['username']);
     $email    = db_real_escape_string($conn, $_POST['email']);
     $hp       = db_real_escape_string($conn, $_POST['hp']);
@@ -45,7 +45,7 @@ if (isset($_POST['register'])) {
     } else {
         // 3. Cek apakah Username atau Email sudah terpakai
         $cek = db_query($conn, "SELECT * FROM users WHERE username = '$username' OR email = '$email'");
-        
+
         // PERBAIKAN: Cek juga apakah NIK sudah pernah didaftarkan
         $cek_nik = db_query($conn, "SELECT * FROM pasien WHERE nik = '$nik'");
 
@@ -59,13 +59,13 @@ if (isset($_POST['register'])) {
 
             // 5. Insert ke tabel USERS
             $queryUser = "INSERT INTO users (username, email, password, role) VALUES ('$username', '$email', '$password_hash', '$role')";
-            
+
             if (db_query($conn, $queryUser)) {
                 $id_user = db_insert_id($conn); // Ambil ID yang baru dibuat
 
                 // 6. Insert ke tabel PASIEN (PERBAIKAN: Tambahkan NIK dan Biodata lainnya)
                 $queryPasien = "INSERT INTO pasien (id_user, nik, nama_lengkap, jenis_kelamin, tanggal_lahir, alamat, email, no_hp) VALUES ('$id_user', '$nik', '$nama', '$jenis_kelamin', '$tanggal_lahir', '$alamat', '$email', '$hp')";
-                
+
                 if (db_query($conn, $queryPasien)) {
                     $registrasi_berhasil = true;
                 } else {
@@ -125,22 +125,34 @@ if (isset($_POST['register'])) {
             border-color: #155724;
             box-shadow: 0 0 0 0.2rem rgba(21, 87, 36, 0.25);
         }
-        .btn-register { 
+        .btn-register {
             background: linear-gradient(to right, #0f3d2e, #155724);
-            color: white; border: none; 
-            padding: 12px; border-radius: 8px; 
-            font-weight: bold; width: 100%; 
+            color: white; border: none;
+            padding: 12px; border-radius: 8px;
+            font-weight: bold; width: 100%;
             letter-spacing: 1px;
             transition: transform 0.2s;
         }
-        .btn-register:hover { 
-            transform: scale(1.02); 
+        .btn-register:hover {
+            transform: scale(1.02);
             color: #fff;
         }
         .input-group-text {
             background-color: #f1f3f5;
             border: 1px solid #ced4da;
             cursor: pointer;
+        }
+
+        @media (max-width: 576px) {
+            .card-register {
+                padding: 30px 20px;
+                margin-top: 50px; /* Space for logo-text */
+            }
+            .logo-text {
+                top: 15px;
+                left: 20px;
+                font-size: 22px;
+            }
         }
     </style>
 </head>
@@ -259,7 +271,7 @@ if (isset($_POST['register'])) {
             </div>
 
             <button type="submit" name="register" class="btn btn-register mb-3">DAFTAR SEKARANG</button>
-            
+
             <div class="text-center">
                 <span class="small text-secondary">Sudah punya akun?</span>
                 <a href="login.php" class="text-success fw-bold text-decoration-none ms-1">Login disini</a>
@@ -367,7 +379,7 @@ if (isset($_POST['register'])) {
             } else if (pVal.length > 0) {
                 pass1.classList.remove('is-valid');
                 pass1.classList.add('is-invalid');
-                
+
                 // Ubah text secara dinamis agar pesan informatif dan spesifik
                 if (pVal.length < 6) {
                     document.getElementById('pass1_feedback').innerText = "Password minimal 6 karakter.";
@@ -377,7 +389,7 @@ if (isset($_POST['register'])) {
             } else {
                 pass1.classList.remove('is-valid', 'is-invalid');
             }
-            
+
             // Check pass2
             if (pass2.value.length > 0) {
                 if (pass2.value === pass1.value) {
@@ -391,7 +403,7 @@ if (isset($_POST['register'])) {
                  pass2.classList.remove('is-valid', 'is-invalid');
             }
         }
-        
+
         pass1.addEventListener('input', validatePassword);
         pass2.addEventListener('input', validatePassword);
 
@@ -399,7 +411,7 @@ if (isset($_POST['register'])) {
         function togglePass(inputId, iconId) {
             var input = document.getElementById(inputId);
             var icon = document.getElementById(iconId);
-            
+
             if (input.type === "password") {
                 input.type = "text";
                 // Ganti ikon menjadi mata terbuka

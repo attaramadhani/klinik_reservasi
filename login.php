@@ -13,7 +13,7 @@ $login_berhasil = false;
 $redirect_url = "";
 
 if (isset($_POST['login'])) {
-    $input = db_real_escape_string($conn, $_POST['username']); 
+    $input = db_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
 
     $query = "SELECT * FROM users WHERE username = '$input' OR email = '$input'";
@@ -21,11 +21,11 @@ if (isset($_POST['login'])) {
 
     if (db_num_rows($result) === 1) {
         $row = db_fetch_assoc($result);
-        
+
         if (password_verify($password, $row['password'])) {
             // PERBAIKAN: Paksa role menjadi huruf kecil agar pas dengan nama folder
-            $role_bersih = strtolower(trim($row['role'])); 
-            
+            $role_bersih = strtolower(trim($row['role']));
+
             $_SESSION['id_user']  = $row['id_user'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['role']     = $role_bersih;
@@ -73,10 +73,10 @@ if (isset($_POST['login'])) {
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         .form-label { font-weight: 600; color: #0f3d2e; font-size: 13px; }
-        .form-control { 
-            background-color: #f8f9fa; 
+        .form-control {
+            background-color: #f8f9fa;
             border: 1px solid #e9ecef;
-            padding: 12px 15px; 
+            padding: 12px 15px;
             border-radius: 12px;
             transition: 0.2s;
         }
@@ -85,11 +85,11 @@ if (isset($_POST['login'])) {
             border-color: #76c720;
             box-shadow: 0 0 0 4px rgba(118, 199, 32, 0.1);
         }
-        .btn-login { 
+        .btn-login {
             background: #155724;
-            color: white; border: none; 
-            padding: 14px; border-radius: 12px; 
-            font-weight: 700; width: 100%; 
+            color: white; border: none;
+            padding: 14px; border-radius: 12px;
+            font-weight: 700; width: 100%;
             transition: 0.3s;
             margin-top: 10px;
         }
@@ -102,6 +102,18 @@ if (isset($_POST['login'])) {
             cursor: pointer;
         }
         .input-group .form-control { border-right: none; border-radius: 12px 0 0 12px; }
+
+        @media (max-width: 576px) {
+            .card-login {
+                padding: 30px 20px;
+                border-radius: 16px;
+            }
+            .logo-text {
+                top: 15px;
+                left: 20px;
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -134,7 +146,7 @@ if (isset($_POST['login'])) {
             </div>
 
             <button type="submit" name="login" class="btn btn-login mb-4">MASUK SEKARANG</button>
-            
+
             <div class="text-center">
                 <span class="small text-secondary">Belum punya akun pasien?</span><br>
                 <a href="register.php" class="text-success fw-bold text-decoration-none small">Daftar Akun Baru</a>
@@ -178,7 +190,7 @@ if (isset($_POST['login'])) {
                 timer: 1500,
                 timerProgressBar: true
             }).then(() => {
-                window.location = '<?php echo $redirect_url; ?>'; 
+                window.location = '<?php echo $redirect_url; ?>';
             });
         <?php endif; ?>
     </script>

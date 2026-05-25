@@ -20,3 +20,7 @@ Thumbs.db
 error_log
 access_log
 .htaccess
+
+.vercel
+.env*
+~$*.doc

@@ -33,10 +33,26 @@ Cliniq adalah aplikasi berbasis web yang dirancang untuk memudahkan proses reser
    - Buka file `koneksi.php`.
    - Lokal MySQL tetap memakai default `127.0.0.1:3307`.
    - Supabase/Vercel memakai environment variables dari `.env.example`.
+   - Project Supabase yang dipakai untuk deploy Vercel: `pqlndxcrwawryahnrfsw` (`klinik_reservasi`, region `ap-southeast-2`).
+   - Set environment variables berikut di Vercel:
+     ```env
+     DB_DRIVER=supabase
+     DB_HOST=aws-1-ap-southeast-2.pooler.supabase.com
+     DB_PORT=6543
+     DB_USER=postgres.pqlndxcrwawryahnrfsw
+     DB_PASS=password-database-supabase-anda
+     DB_NAME=postgres
+     DB_SSLMODE=require
+     ```
 
 4. **Konfigurasi Midtrans**:
-   - Buka file `admin/input_tagihan.php`.
-   - Masukkan `Server Key` dan `Client Key` dari dashboard Sandbox/Production Midtrans Anda pada variabel `$server_key` dan `$client_key`.
+   - Simpan key Midtrans di environment variables, bukan langsung di file PHP.
+   - Untuk demo, gunakan key Sandbox dari dashboard Midtrans:
+     ```env
+     MIDTRANS_SERVER_KEY=SB-Mid-server-your-sandbox-server-key
+     MIDTRANS_CLIENT_KEY=SB-Mid-client-your-sandbox-client-key
+     MIDTRANS_IS_PRODUCTION=false
+     ```
 
 5. **Jalankan Aplikasi**:
    - Pindahkan folder ke direktori server (seperti `htdocs` di XAMPP atau `www` di Laragon).

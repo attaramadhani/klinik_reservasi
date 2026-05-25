@@ -72,8 +72,65 @@ $current_page = basename($_SERVER['PHP_SELF']);
     }
     
     /* Main Content */
-    .main-content { margin-left: 260px; padding: 40px; }
+    .main-content { margin-left: 260px; padding: 40px; transition: all 0.3s; }
+
+    /* Hamburger Menu Button */
+    .mobile-toggle {
+        display: none;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1001;
+        background: var(--sidebar-bg);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* Overlay for mobile sidebar */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+        }
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        .main-content {
+            margin-left: 0 !important;
+            padding: 20px !important;
+            padding-top: 70px !important; /* space for hamburger */
+        }
+        .mobile-toggle {
+            display: block;
+        }
+        .sidebar-overlay.show {
+            display: block;
+        }
+    }
 </style>
+
+<!-- Mobile Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Mobile Toggle Button -->
+<button class="mobile-toggle" id="mobileToggle">
+    <i class="fas fa-bars"></i>
+</button>
 
 <div class="sidebar shadow">
     <div class="logo-area text-center">
@@ -100,3 +157,23 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileToggle = document.getElementById('mobileToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (mobileToggle && sidebar && overlay) {
+            mobileToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                overlay.classList.toggle('show');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            });
+        }
+    });
+</script>

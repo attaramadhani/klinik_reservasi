@@ -39,8 +39,20 @@ class DbConnection
     }
 }
 
+function db_set_last_connect_error(string $message): void
+{
+    $GLOBALS['DB_LAST_CONNECT_ERROR'] = $message;
+}
+
+function db_last_connect_error(): string
+{
+    return $GLOBALS['DB_LAST_CONNECT_ERROR'] ?? '';
+}
+
 function db_connect_from_env(): ?DbConnection
 {
+    db_set_last_connect_error('');
+
     $databaseUrl = getenv('DATABASE_URL') ?: '';
     $defaultDriver = ($databaseUrl || getenv('PGHOST')) ? 'pgsql' : 'mysql';
     $driver = strtolower(getenv('DB_DRIVER') ?: getenv('DATABASE_DRIVER') ?: $defaultDriver);
@@ -55,6 +67,11 @@ function db_connect_from_env(): ?DbConnection
         $sslmode = getenv('DB_SSLMODE') ?: 'require';
         $dsn = "pgsql:host={$host};port={$port};dbname={$db};sslmode={$sslmode}";
 
+        if ($host === '' || $user === '' || $pass === '' || $db === '') {
+            db_set_last_connect_error('Konfigurasi PostgreSQL belum lengkap. Pastikan DB_HOST, DB_USER, DB_PASS, dan DB_NAME sudah di-set.');
+            return null;
+        }
+
         try {
             $pdo = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -63,8 +80,14 @@ function db_connect_from_env(): ?DbConnection
 
             return new DbConnection('pgsql', $pdo);
         } catch (Throwable $e) {
+            db_set_last_connect_error($e->getMessage());
             return null;
         }
+    }
+
+    if (!function_exists('mysqli_connect')) {
+        db_set_last_connect_error('Ekstensi mysqli tidak tersedia dan DB_DRIVER tidak diset ke supabase/pgsql.');
+        return null;
     }
 
     mysqli_report(MYSQLI_REPORT_OFF);
@@ -77,6 +100,7 @@ function db_connect_from_env(): ?DbConnection
     $handle = @mysqli_connect($host, $user, $pass, $db, $port);
 
     if (!$handle) {
+        db_set_last_connect_error(mysqli_connect_error() ?: 'Koneksi MySQL gagal.');
         return null;
     }
 

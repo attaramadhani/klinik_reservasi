@@ -16,10 +16,14 @@ if (!isset($_GET['id'])) {
 $id_reservasi = db_real_escape_string($conn, $_GET['id']);
 
 // ==========================================
-// KREDENSIAL MIDTRANS
+// KONFIGURASI MIDTRANS
 // ==========================================
-$server_key = 'YOUR_MIDTRANS_SERVER_KEY'; 
-$client_key = 'YOUR_MIDTRANS_CLIENT_KEY'; 
+$server_key = getenv('MIDTRANS_SERVER_KEY') ?: '';
+$client_key = getenv('MIDTRANS_CLIENT_KEY') ?: '';
+$is_midtrans_production = strtolower((string) getenv('MIDTRANS_IS_PRODUCTION')) === 'true';
+$midtrans_app_url = $is_midtrans_production
+    ? 'https://app.midtrans.com'
+    : 'https://app.sandbox.midtrans.com';
 
 $snap_token = "";
 
@@ -46,57 +50,64 @@ if (isset($_POST['simpan_tunai'])) {
 // 2. PROSES BAYAR VIA MIDTRANS (QRIS/TRANSFER)
 if (isset($_POST['simpan_midtrans'])) {
     $jumlah_bayar = db_real_escape_string($conn, $_POST['jumlah_bayar']);
-    
-    // Logika INSERT atau UPDATE (Status masih Pending)
-    if ($is_bayar_exist) {
-        db_query($conn, "UPDATE pembayaran SET jumlah_bayar = '$jumlah_bayar', metode_pembayaran = 'Midtrans', status_pembayaran = 'Pending' WHERE id_reservasi = '$id_reservasi'");
-    } else {
-        db_query($conn, "INSERT INTO pembayaran (id_reservasi, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES ('$id_reservasi', '$jumlah_bayar', 'Midtrans', 'Pending')");
-    }
 
-    // Siapkan Payload Data untuk Midtrans
-    $order_id = "INV-" . $id_reservasi . "-" . time();
-    $params = [
-        'transaction_details' => [
-            'order_id' => $order_id,
-            'gross_amount' => (int)$jumlah_bayar,
-        ],
-        'customer_details' => [
-            'first_name' => "Pasien Antrian #", 
-            'last_name' => $id_reservasi
-        ]
-    ];
-
-    // Request Snap Token menggunakan cURL
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://app.sandbox.midtrans.com/snap/v1/transactions');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Accept: application/json',
-        'Authorization: Basic ' . base64_encode($server_key . ':')
-    ]);
-    
-    // Bypass SSL Localhost Laragon
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); 
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-    
-    $result = curl_exec($ch);
-    
-    if ($result === false) {
-        $error = "cURL Error: " . curl_error($ch);
+    if ($server_key === '' || $client_key === '') {
+        $error = 'Konfigurasi Midtrans belum lengkap. Pastikan MIDTRANS_SERVER_KEY dan MIDTRANS_CLIENT_KEY sudah di-set di Vercel.';
     } else {
-        $response = json_decode($result);
-        if(isset($response->token)) {
-            $snap_token = $response->token;
-            db_query($conn, "UPDATE pembayaran SET snap_token = '$snap_token' WHERE id_reservasi = '$id_reservasi'");
+
+        // Logika INSERT atau UPDATE (Status masih Pending)
+        if ($is_bayar_exist) {
+            db_query($conn, "UPDATE pembayaran SET jumlah_bayar = '$jumlah_bayar', metode_pembayaran = 'Midtrans', status_pembayaran = 'Pending' WHERE id_reservasi = '$id_reservasi'");
         } else {
-            $error = "Midtrans Error: " . (isset($response->error_messages[0]) ? $response->error_messages[0] : 'Gagal terhubung ke server Midtrans.');
+            db_query($conn, "INSERT INTO pembayaran (id_reservasi, jumlah_bayar, metode_pembayaran, status_pembayaran) VALUES ('$id_reservasi', '$jumlah_bayar', 'Midtrans', 'Pending')");
         }
+
+        // Siapkan Payload Data untuk Midtrans
+        $order_id = "INV-" . $id_reservasi . "-" . time();
+        $params = [
+            'transaction_details' => [
+                'order_id' => $order_id,
+                'gross_amount' => (int)$jumlah_bayar,
+            ],
+            'customer_details' => [
+                'first_name' => "Pasien Antrian #",
+                'last_name' => $id_reservasi
+            ]
+        ];
+
+        // Request Snap Token menggunakan cURL
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $midtrans_app_url . '/snap/v1/transactions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Accept: application/json',
+            'Authorization: Basic ' . base64_encode($server_key . ':')
+        ]);
+
+        // Bypass SSL Localhost Laragon
+        if (in_array($_SERVER['HTTP_HOST'] ?? '', ['localhost', '127.0.0.1'], true)) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        }
+
+        $result = curl_exec($ch);
+
+        if ($result === false) {
+            $error = "cURL Error: " . curl_error($ch);
+        } else {
+            $response = json_decode($result);
+            if(isset($response->token)) {
+                $snap_token = $response->token;
+                db_query($conn, "UPDATE pembayaran SET snap_token = '$snap_token' WHERE id_reservasi = '$id_reservasi'");
+            } else {
+                $error = "Midtrans Error: " . (isset($response->error_messages[0]) ? $response->error_messages[0] : 'Gagal terhubung ke server Midtrans.');
+            }
+        }
+        curl_close($ch);
     }
-    curl_close($ch);
 }
 
 // 3. CALLBACK KETIKA POPUP MIDTRANS BERHASIL DIBAYAR
@@ -131,7 +142,7 @@ if (!$data) {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="<?php echo $client_key; ?>"></script>
+    <script type="text/javascript" src="<?php echo $midtrans_app_url; ?>/snap/snap.js" data-client-key="<?php echo htmlspecialchars($client_key, ENT_QUOTES, 'UTF-8'); ?>"></script>
     
     <style>
         body { background-color: #f8f9fa; font-family: 'Plus Jakarta Sans', sans-serif; }
