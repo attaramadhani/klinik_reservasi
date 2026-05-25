@@ -27,7 +27,7 @@ if (isset($_POST['old_pass'])) {
         } else {
             echo "<!DOCTYPE html><html><head><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script></head><body><script>
                 document.addEventListener('DOMContentLoaded', function(){ 
-                    Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal mengupdate password.', confirmButtonColor: '#e74c3c'}).then(() => { window.location='profil.php'; }); 
+                    Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal memperbarui password.', confirmButtonColor: '#e74c3c'}).then(() => { window.location='profil.php'; });
                 });
             </script></body></html>";
         }

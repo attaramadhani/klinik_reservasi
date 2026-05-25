@@ -25,9 +25,8 @@ Cliniq adalah aplikasi berbasis web yang dirancang untuk memudahkan proses reser
    ```
 
 2. **Persiapan Database**:
-   - Buat database baru bernama `klinik_reservasi` di MySQL (phpMyAdmin).
-   - Import file `klinik_reservasi.sql` yang tersedia di root folder.
    - Untuk Supabase, buat project Supabase lalu jalankan isi file `supabase_schema.sql` di SQL Editor.
+   - File schema hanya berisi struktur tabel. Data akun/pasien/reservasi tidak disimpan di GitHub demi privasi.
 
 3. **Konfigurasi Koneksi**:
    - Buka file `koneksi.php`.

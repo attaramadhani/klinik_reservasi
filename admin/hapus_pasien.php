@@ -19,5 +19,5 @@ if(isset($_GET['nik'])) {
         db_query($conn, "DELETE FROM users WHERE id_user = '$id_user'");
     }
 }
-echo "<script>alert('Pasien berhasil dihapus permanen bedeserta seluruhan data riwayatnya!'); window.location.href='pasien.php';</script>";
+echo "<html><body><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script><script>Swal.fire({icon: 'success', title: 'Berhasil', text: 'Pasien berhasil dihapus secara permanen beserta seluruh data riwayatnya!'}).then(() => { window.location.href='pasien.php'; });</script></body></html>";
 ?>

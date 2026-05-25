@@ -26,13 +26,15 @@ if(isset($_POST['update_pasien'])) {
         db_query($conn, "UPDATE users SET email='$email' WHERE id_user='$id_u'");
     }
     
-    echo "<script>alert('Data pasien berhasil diperbarui!'); window.location.href='pasien.php';</script>";
+    echo "<html><body><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
+    echo "<script>Swal.fire({icon: 'success', title: 'Berhasil', text: 'Data pasien berhasil diperbarui!'}).then(() => { window.location.href='pasien.php'; });</script></body></html>";
     exit;
 }
 
 $q_pas = db_query($conn, "SELECT * FROM pasien WHERE nik = '$nik'");
 if(db_num_rows($q_pas) == 0) {
-    echo "<script>alert('Pasien tidak ditemukan!'); window.location.href='pasien.php';</script>";
+    echo "<html><body><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>";
+    echo "<script>Swal.fire({icon: 'error', title: 'Gagal', text: 'Pasien tidak ditemukan!'}).then(() => { window.location.href='pasien.php'; });</script></body></html>";
     exit;
 }
 $pas = db_fetch_assoc($q_pas);

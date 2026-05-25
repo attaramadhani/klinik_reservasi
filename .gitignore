@@ -5,6 +5,8 @@ vendor/
 
 # Database
 # koneksi.php # Uncomment this if you want to keep your credentials private
+klinik_reservasi.sql
+Daftar_Akun_Klinik.doc
 
 # IDEs and Editors
 .idea/

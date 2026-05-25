@@ -25,10 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             });
         </script></body></html>";
     } else {
-        // Tampilkan error database jika gagal agar mudah didebug
+        error_log('Gagal memperbarui profil pasien: ' . db_error($conn));
         echo "<!DOCTYPE html><html><head><script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script></head><body><script>
             document.addEventListener('DOMContentLoaded', function(){ 
-                Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal update database: " . db_error($conn) . "', confirmButtonColor: '#e74c3c'}).then(() => { window.location='profil.php'; }); 
+                Swal.fire({icon: 'error', title: 'Gagal', text: 'Gagal memperbarui database. Silakan coba lagi.', confirmButtonColor: '#e74c3c'}).then(() => { window.location='profil.php'; });
             });
         </script></body></html>";
     }
