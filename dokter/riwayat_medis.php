@@ -55,6 +55,7 @@ if (isset($_GET['nik'])) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Riwayat Rekam Medis - Cliniq</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -63,7 +64,6 @@ if (isset($_GET['nik'])) {
         :root { --primary-green: #0f3d2e; --accent-green: #76c720; --bg-light: #f4f7f6; }
         body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        .main-content { margin-left: 260px; padding: 30px; }
         
         .patient-list-card { background: white; border-radius: 20px; height: calc(100vh - 80px); overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .patient-item { padding: 15px; border-bottom: 1px solid #eee; transition: 0.2s; cursor: pointer; text-decoration: none; display: block; color: inherit; }
@@ -77,6 +77,10 @@ if (isset($_GET['nik'])) {
         .label-custom { font-size: 11px; font-weight: 800; color: #6c757d; letter-spacing: 1px; margin-bottom: 5px; text-transform: uppercase; }
         .data-value { font-weight: 600; color: #212529; font-size: 15px; }
         .box-info { background: #f8f9fa; border-radius: 12px; padding: 15px; border: 1px solid #eee; }
+        @media (max-width: 768px) {
+            .patient-list-card { height: auto; max-height: 50vh; }
+            .history-card { height: auto; }
+        }
     </style>
 </head>
 <body>

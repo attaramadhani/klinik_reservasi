@@ -87,6 +87,7 @@ if (isset($_POST['update_pemeriksaan'])) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Rekam Medis - Cliniq</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -95,7 +96,6 @@ if (isset($_POST['update_pemeriksaan'])) {
         :root { --primary-green: #0f3d2e; --accent-green: #76c720; --bg-light: #f4f7f6; }
         body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        .main-content { margin-left: 260px; padding: 30px; }
         
         .exam-card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); max-width: 900px; margin: 0 auto;}
         .form-control, .form-select { border-radius: 12px; border: 1px solid #e0e0e0; padding: 12px; }

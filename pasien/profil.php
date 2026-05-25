@@ -158,6 +158,37 @@ $u = db_fetch_assoc(db_query($conn, "SELECT u.*, p.* FROM users u JOIN pasien p 
             justify-content: center;
             margin-right: 15px;
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .profile-header {
+                height: 180px;
+                border-radius: 0 0 30px 30px;
+            }
+            .btn-back {
+                top: 15px;
+                left: 15px;
+                padding: 8px 15px;
+                font-size: 13px;
+                border-radius: 12px;
+            }
+            .avatar-box {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+                border-radius: 28px;
+            }
+            .avatar-container {
+                margin-top: -55px;
+            }
+            .card-profile {
+                padding: 25px !important;
+                border-radius: 20px;
+            }
+            h2.fw-800 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>

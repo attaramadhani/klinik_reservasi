@@ -35,6 +35,7 @@ if (!$data) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cetak Hasil - <?php echo $data['nama_lengkap']; ?></title>
     <style>
         /* Desain Khusus Kertas A4 & PDF (Sangat Bersih) */
@@ -58,6 +59,16 @@ if (!$data) {
         
         @media print {
             body { padding: 0; margin: 0; }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .header h1 { font-size: 20px; }
+            .header p { font-size: 12px; }
+            td { font-size: 12px; }
+            .label { width: 110px; }
+            .ttd-box { width: auto; }
         }
     </style>
 </head>

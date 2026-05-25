@@ -119,6 +119,14 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
             color: var(--accent-green);
             font-weight: 700;
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 576px) {
+            .header-title { font-size: 24px !important; }
+            .doctor-card { padding: 20px !important; }
+            .doctor-avatar-box { width: 55px; height: 55px; font-size: 22px; border-radius: 14px; }
+            .schedule-info { padding: 10px; }
+        }
     </style>
 </head>
 <body>

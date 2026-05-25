@@ -136,6 +136,12 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
             border: 3px solid var(--white);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+
+        @media (max-width: 768px) {
+            .stat-card { padding: 15px; }
+            .stat-card h2 { font-size: 22px !important; }
+            .stat-card h3 { font-size: 20px !important; }
+        }
     </style>
 </head>
 <body>
@@ -143,7 +149,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
 <?php include 'sidebar.php'; ?>
 
 <div class="main-content">
-    <header class="d-flex justify-content-between align-items-center mb-5">
+    <header class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-5">
         <div>
             <h2 class="fw-800 mb-1" style="color: #0f3d2e;">Halo, <?php echo $_SESSION['username']; ?>! 👋</h2>
             <p class="text-muted mb-0">Selamat datang kembali di panel manajemen klinik.</p>

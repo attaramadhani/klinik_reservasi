@@ -44,6 +44,7 @@ $is_paid = ($data['status_pembayaran'] == 'Lunas') || ($data['status'] == 'Seles
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $is_paid ? 'Bukti Pembayaran Sah' : 'Tiket Antrian'; ?> - #<?php echo $data['no_antrian']; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -76,6 +77,17 @@ $is_paid = ($data['status_pembayaran'] == 'Lunas') || ($data['status'] == 'Seles
             body { background: white; padding: 0; }
             .ticket-box { box-shadow: none; max-width: 100%; padding: 20px; border-top-width: 6px; }
             .no-print { display: none; }
+        }
+        @media (max-width: 576px) {
+            body { padding: 15px; }
+            .ticket-box { padding: 20px; border-radius: 10px; }
+            .antrian h1 { font-size: 50px; }
+            .jenis-dokumen { font-size: 14px; letter-spacing: 1px; }
+            .header h2 { font-size: 22px; }
+            .details th, .details td { font-size: 13px; padding: 10px 0; }
+            .total-box { flex-wrap: wrap; gap: 8px; padding: 15px; }
+            .total-amount { font-size: 20px; }
+            .watermark { font-size: 60px; }
         }
     </style>
 </head>

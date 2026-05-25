@@ -66,6 +66,27 @@ if (isset($_GET['aksi']) && $_GET['aksi'] == 'batal' && isset($_GET['id'])) {
         .queue-label { font-size: 10px; opacity: 0.8; }
         .btn-cancel { font-size: 12px; color: #dc3545; border: 1px solid #dc3545; border-radius: 20px; padding: 5px 15px; text-decoration: none; transition: 0.3s; }
         .btn-cancel:hover { background-color: #dc3545; color: white; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .card-history .row {
+                flex-wrap: wrap;
+            }
+            .queue-box {
+                min-width: 60px;
+                padding: 8px;
+            }
+            .queue-number {
+                font-size: 20px;
+            }
+            .navbar .d-flex {
+                gap: 5px;
+            }
+            .navbar .btn {
+                font-size: 11px;
+                padding: 5px 10px;
+            }
+        }
     </style>
 </head>
 <body>

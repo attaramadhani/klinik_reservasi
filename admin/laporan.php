@@ -71,7 +71,6 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
             color: var(--text-dark);
         }
         
-        .main-content { margin-left: 260px; padding: 40px; }
 
         .stat-card { 
             border: none; 
@@ -101,6 +100,11 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
             padding: 18px;
             border-bottom: 1px solid #f1f1f1;
         }
+
+        @media (max-width: 768px) {
+            .stat-card { padding: 20px; }
+            .stat-card h1 { font-size: 28px !important; }
+        }
     </style>
 </head>
 <body>
@@ -110,7 +114,7 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
 <div class="main-content">
     
     <!-- HEADER & FILTER -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
         <div>
             <h2 class="fw-800 mb-1" style="color: #0f3d2e;">Laporan Keuangan & Kinerja</h2>
             <p class="text-muted mb-0">Pantau riwayat pendapatan dan performa dokter per bulan.</p>

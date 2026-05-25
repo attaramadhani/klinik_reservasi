@@ -58,6 +58,7 @@ if (isset($_GET['periksa'])) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pemeriksaan Pasien - Cliniq</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -67,7 +68,6 @@ if (isset($_GET['periksa'])) {
         body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif; }
 
         
-        .main-content { margin-left: 260px; padding: 30px; }
         
         .patient-list-card { background: white; border-radius: 20px; height: calc(100vh - 80px); overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .patient-item { padding: 15px; border-bottom: 1px solid #eee; transition: 0.2s; cursor: pointer; text-decoration: none; display: block; color: inherit; }
@@ -77,6 +77,10 @@ if (isset($_GET['periksa'])) {
         .form-control, .form-select { border-radius: 12px; border: 1px solid #e0e0e0; padding: 12px; }
         .form-control:focus { border-color: var(--accent-green); box-shadow: 0 0 0 4px rgba(118, 199, 32, 0.1); }
         .label-custom { font-size: 11px; font-weight: 800; color: var(--primary-green); letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase; }
+        @media (max-width: 768px) {
+            .patient-list-card { height: auto; max-height: 50vh; }
+            .exam-card { height: auto; }
+        }
     </style>
 </head>
 <body>

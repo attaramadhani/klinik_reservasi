@@ -30,6 +30,26 @@ $nik_pasien = $d_pasien['nik'];
         .result-card:hover { transform: translateY(-5px); }
         .icon-circle { width: 50px; height: 50px; background: #e9f7ef; color: #155724; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .mt-minus { margin-top: -30px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-green {
+                padding: 60px 15px 30px 15px;
+                border-radius: 0 0 25px 25px;
+            }
+            .result-card .border-end {
+                border-right: none !important;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 15px;
+                padding-bottom: 15px;
+            }
+            .result-card .col-md-3:last-child {
+                text-align: left !important;
+            }
+            .result-card {
+                padding: 20px !important;
+            }
+        }
     </style>
 </head>
 <body>

@@ -17,10 +17,10 @@ $nama_sapaan = $pasien ? htmlspecialchars($pasien['nama_lengkap']) : htmlspecial
 $nik_pasien = $pasien['nik'];
 
 // AMBIL RESERVASI TERDEKAT
-$q_status = "SELECT r.*, d.nama_dokter, d.spesialisasi, j.hari 
+$q_status = "SELECT r.*, d.nama_dokter, d.spesialisasi, j.hari
              FROM reservasi r
-             JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal 
-             JOIN dokter d ON j.id_dokter = d.id_dokter 
+             JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
+             JOIN dokter d ON j.id_dokter = d.id_dokter
              WHERE r.nik = '$nik_pasien' AND r.status IN ('Menunggu', 'Dikonfirmasi')
              ORDER BY r.tanggal_kunjungan ASC LIMIT 1";
 $res_status = db_query($conn, $q_status);
@@ -44,86 +44,86 @@ $data_aktif = db_fetch_assoc($res_status);
             --bg-soft: #f0f4f3;
         }
 
-        body { 
-            background-color: var(--bg-soft); 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+        body {
+            background-color: var(--bg-soft);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             color: #2d3436;
         }
 
         /* Navbar Blur Effect */
-        .navbar { 
-            background: rgba(15, 61, 46, 0.95) !important; 
+        .navbar {
+            background: rgba(15, 61, 46, 0.95) !important;
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         .navbar-brand { font-weight: 800; font-size: 22px; }
 
         /* Hero Section Modern */
-        .hero-section { 
-            background: linear-gradient(135deg, #0f3d2e 0%, #1a5c43 100%); 
-            color: white; 
-            padding: 80px 20px 80px 20px; 
-            border-radius: 0 0 50px 50px; 
+        .hero-section {
+            background: linear-gradient(135deg, #0f3d2e 0%, #1a5c43 100%);
+            color: white;
+            padding: 80px 20px 80px 20px;
+            border-radius: 0 0 50px 50px;
             position: relative;
         }
 
         /* Status Card Glassmorphism */
-        .card-status { 
-            border: none; 
-            border-radius: 24px; 
-            background: white; 
-            margin-top: -60px; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08); 
+        .card-status {
+            border: none;
+            border-radius: 24px;
+            background: white;
+            margin-top: -60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
             padding: 25px;
             transition: 0.3s;
         }
         .card-status:hover { transform: translateY(-5px); }
 
         /* Menu Grid Modern */
-        .menu-card { 
-            border: none; 
-            border-radius: 24px; 
-            background: white; 
-            padding: 30px 20px; 
-            text-align: center; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.02); 
-            height: 100%; 
-            text-decoration: none; 
-            display: block; 
+        .menu-card {
+            border: none;
+            border-radius: 24px;
+            background: white;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+            height: 100%;
+            text-decoration: none;
+            display: block;
             color: var(--primary-green);
             position: relative;
             overflow: hidden;
         }
-        .menu-card:hover { 
-            transform: translateY(-12px); 
-            box-shadow: 0 20px 40px rgba(15, 61, 46, 0.12); 
+        .menu-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(15, 61, 46, 0.12);
             background: var(--primary-green);
             color: white !important;
         }
         .menu-card:hover .icon-box { background: rgba(255,255,255,0.2); color: white; }
         .menu-card:hover .card-text { color: rgba(255,255,255,0.8); }
 
-        .icon-box { 
-            width: 65px; 
-            height: 65px; 
-            line-height: 65px; 
-            border-radius: 20px; 
-            background: #f0f9eb; 
-            color: var(--primary-green); 
-            font-size: 26px; 
-            margin: 0 auto 20px auto; 
+        .icon-box {
+            width: 65px;
+            height: 65px;
+            line-height: 65px;
+            border-radius: 20px;
+            background: #f0f9eb;
+            color: var(--primary-green);
+            font-size: 26px;
+            margin: 0 auto 20px auto;
             transition: 0.3s;
         }
 
         .card-title { font-weight: 800; font-size: 17px; margin-bottom: 8px; }
         .card-text { font-size: 13px; color: #636e72; }
-        
-        .status-badge { 
-            padding: 8px 16px; 
-            border-radius: 12px; 
-            font-size: 10px; 
-            font-weight: 800; 
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 800;
             letter-spacing: 1px;
         }
 
@@ -134,6 +134,50 @@ $data_aktif = db_fetch_assoc($res_status);
             transition: 0.3s;
         }
         .btn-logout:hover { background: #ff7675; border-color: #ff7675; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 15px 60px 15px;
+                border-radius: 0 0 30px 30px;
+            }
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            .card-status {
+                margin-top: -40px;
+                padding: 18px;
+            }
+            .card-status .border-end {
+                border-right: none !important;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+            }
+            .card-status h1 {
+                font-size: 36px !important;
+            }
+            .menu-card {
+                padding: 20px 15px;
+            }
+            .icon-box {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 22px;
+                border-radius: 16px;
+                margin-bottom: 12px;
+            }
+            .card-title {
+                font-size: 14px;
+            }
+            .card-text {
+                font-size: 11px;
+            }
+            .navbar {
+                padding: 10px 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -258,9 +302,6 @@ $data_aktif = db_fetch_assoc($res_status);
                 }
             })
         }
-    </script>
-</body>
-</html> }
     </script>
 </body>
 </html>

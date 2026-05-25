@@ -41,6 +41,7 @@ $pas = db_fetch_assoc($q_pas);
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Data Pasien - Cliniq Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -48,7 +49,6 @@ $pas = db_fetch_assoc($q_pas);
     <style>
         :root { --sidebar-bg: #0f3d2e; --accent: #76c720; --bg-light: #f8f9fa; }
         body { background: var(--bg-light); font-family: 'Plus Jakarta Sans', sans-serif; }
-        .main-content { margin-left: 260px; padding: 40px; }
         .custom-card { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .form-control, .form-select { border-radius: 12px; padding: 12px 15px; }
     </style>

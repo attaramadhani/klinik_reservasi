@@ -19,6 +19,7 @@ $id_dokter = $dokter['id_dokter'];
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jadwal Praktik Saya - Cliniq</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -29,7 +30,6 @@ $id_dokter = $dokter['id_dokter'];
         
 
         
-        .main-content { margin-left: 260px; padding: 40px; }
         .card-jadwal { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
         .badge-hari { background: #e9f7ef; color: #155724; border: 1px solid #d1e7dd; padding: 6px 15px; border-radius: 10px; font-weight: 600; }
         .badge-kuota { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 12px; }
