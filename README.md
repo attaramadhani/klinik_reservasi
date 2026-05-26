@@ -31,34 +31,20 @@ Cliniq adalah aplikasi berbasis web yang dirancang untuk memudahkan proses reser
 3. **Konfigurasi Koneksi**:
    - Buka file `koneksi.php`.
    - Lokal MySQL tetap memakai default `127.0.0.1:3307`.
-   - Supabase/Vercel memakai environment variables dari `.env.example`.
-   - Set environment variables berikut di Vercel:
-     ```env
-     DB_DRIVER=supabase
-     DB_HOST=aws-1-ap-southeast-2.pooler.supabase.com
-     DB_PORT=6543
-     DB_USER=postgres.your-supabase-project-ref
-     DB_PASS=password-database-supabase-anda
-     DB_NAME=postgres
-     DB_SSLMODE=require
-     ```
-   - Ganti `your-supabase-project-ref` sesuai project ref Supabase Anda. Simpan nilai asli hanya di environment variables Vercel/lokal, bukan di GitHub.
+   - Untuk deploy, simpan konfigurasi database sebagai environment variables langsung di dashboard platform deploy.
+   - Jangan menaruh host, user, password, project ref, atau connection string di GitHub.
 
 4. **Konfigurasi Midtrans**:
    - Simpan key Midtrans di environment variables, bukan langsung di file PHP.
-   - Untuk demo, gunakan key Sandbox dari dashboard Midtrans:
-     ```env
-     MIDTRANS_SERVER_KEY=SB-Mid-server-your-sandbox-server-key
-     MIDTRANS_CLIENT_KEY=SB-Mid-client-your-sandbox-client-key
-     MIDTRANS_IS_PRODUCTION=false
-     ```
+   - Untuk demo, gunakan mode Sandbox dari dashboard Midtrans.
+   - Jangan menaruh Server Key, Client Key, atau kredensial pembayaran apa pun di GitHub.
 
 5. **Jalankan Aplikasi**:
    - Pindahkan folder ke direktori server (seperti `htdocs` di XAMPP atau `www` di Laragon).
    - Akses melalui browser: `http://localhost/klinik`.
 
 ## 🔒 Catatan Keamanan
-Jangan pernah mengunggah (push) file yang berisi API Key asli ke GitHub. Gunakan placeholder atau environment variables untuk menjaga keamanan kredensial Anda.
+Jangan pernah mengunggah file yang berisi API key, connection string, password database, project ref, data akun, data pasien, atau dump database ke GitHub. Simpan semua nilai sensitif di environment variables platform deploy atau file lokal yang di-ignore.
 
 ---
 Dikembangkan oleh **Atta Ramadhani**

@@ -25,4 +25,5 @@ access_log
 
 .vercel
 .env*
+*.env.example
 ~$*.doc
