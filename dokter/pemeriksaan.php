@@ -90,9 +90,9 @@ if (isset($_GET['periksa'])) {
 <div class="main-content">
     <div class="row g-4">
         
-        <div class="col-md-4">
+        <div class="<?php echo $pasien_terpilih ? 'd-none d-md-block' : 'd-block'; ?> col-md-4">
             <div class="patient-list-card">
-                <div class="p-4 border-bottom bg-light sticky-top" style="border-radius: 20px 20px 0 0;">
+                <div class="p-4 border-bottom bg-light sticky-top" style="border-radius: 20px 20px 0 0; z-index: 5;">
                     <h6 class="fw-800 mb-0" style="color: var(--primary-green);">Antrian Pemeriksaan</h6>
                 </div>
                 <div>
@@ -126,9 +126,13 @@ if (isset($_GET['periksa'])) {
             </div>
         </div>
 
-        <div class="col-md-8">
+        <div class="<?php echo $pasien_terpilih ? 'd-block' : 'd-none d-md-block'; ?> col-md-8">
             <div class="exam-card">
                 <?php if($pasien_terpilih): ?>
+                <!-- Kembali ke Antrian Button on Mobile -->
+                <div class="d-md-none mb-3">
+                    <a href="pemeriksaan.php" class="btn btn-sm btn-outline-secondary rounded-pill px-3"><i class="fas fa-arrow-left me-1"></i> Kembali ke Antrian</a>
+                </div>
                 
                 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
                     <div>
@@ -173,19 +177,19 @@ if (isset($_GET['periksa'])) {
                             <label class="label-custom">Alergi Obat <small class="text-muted fw-normal">(Centang cepat)</small></label>
                             <div class="d-flex flex-wrap gap-2 mb-2 p-2 rounded" style="background:#f1f4f3; border: 1px solid #e0e6e4;">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="al_tidak" value="Tidak ada" onchange="updateAlergi()" checked>
+                                    <input class="form-check-input" type="checkbox" id="al_tidak" value="Tidak ada" onchange="updateAlergi(event)" checked>
                                     <label class="form-check-label fw-medium text-success" for="al_tidak">Tidak Ada</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="al_antibiotik" value="Antibiotik" onchange="updateAlergi()">
+                                    <input class="form-check-input" type="checkbox" id="al_antibiotik" value="Antibiotik" onchange="updateAlergi(event)">
                                     <label class="form-check-label text-dark" for="al_antibiotik">Antibiotik</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="al_nsaid" value="NSAID/Obat Nyeri" onchange="updateAlergi()">
+                                    <input class="form-check-input" type="checkbox" id="al_nsaid" value="NSAID/Obat Nyeri" onchange="updateAlergi(event)">
                                     <label class="form-check-label text-dark" for="al_nsaid">NSAID (Nyeri)</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="al_paracetamol" value="Paracetamol" onchange="updateAlergi()">
+                                    <input class="form-check-input" type="checkbox" id="al_paracetamol" value="Paracetamol" onchange="updateAlergi(event)">
                                     <label class="form-check-label text-dark" for="al_paracetamol">Paracetamol</label>
                                 </div>
                             </div>
@@ -244,7 +248,7 @@ if (isset($_GET['periksa'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // JS for Checkbox Alergi
-    function updateAlergi() {
+    function updateAlergi(event) {
         const c_tidak = document.getElementById('al_tidak');
         const checkboxes = document.querySelectorAll('.form-check-input[id^="al_"]:not(#al_tidak)');
         const alergi_input = document.getElementById('alergi_input');

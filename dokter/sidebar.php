@@ -16,7 +16,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         color: white; 
         position: fixed; 
         width: 260px;
-        z-index: 1000;
+        z-index: 9999 !important;
         top: 0; left: 0;
     }
     .sidebar .logo-area { 
@@ -50,7 +50,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         position: fixed;
         top: 15px;
         left: 15px;
-        z-index: 1001;
+        z-index: 9999 !important;
         background: var(--primary-green);
         color: white;
         border: none;
@@ -69,7 +69,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         right: 0;
         bottom: 0;
         background: rgba(0,0,0,0.5);
-        z-index: 999;
+        z-index: 9998 !important;
     }
 
     /* Responsive Styles */

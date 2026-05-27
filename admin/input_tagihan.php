@@ -106,7 +106,9 @@ if (isset($_POST['simpan_midtrans'])) {
                 $error = "Midtrans Error: " . (isset($response->error_messages[0]) ? $response->error_messages[0] : 'Gagal terhubung ke server Midtrans.');
             }
         }
-        curl_close($ch);
+        if (is_resource($ch)) {
+            curl_close($ch);
+        }
     }
 }
 

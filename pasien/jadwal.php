@@ -173,7 +173,16 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'pasien') {
                                      FROM dokter d 
                                      JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter
                                      $where_clause
-                                     ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')");
+                                     ORDER BY CASE j.hari 
+                                         WHEN 'Senin' THEN 1 
+                                         WHEN 'Selasa' THEN 2 
+                                         WHEN 'Rabu' THEN 3 
+                                         WHEN 'Kamis' THEN 4 
+                                         WHEN 'Jumat' THEN 5 
+                                         WHEN 'Sabtu' THEN 6 
+                                         WHEN 'Minggu' THEN 7 
+                                         ELSE 8 
+                                     END");
             
             if(db_num_rows($q) == 0) {
                 echo "<div class='col-12 text-center py-5'><i class='fas fa-calendar-times fa-3x mb-3 opacity-25'></i><p class='opacity-50'>Jadwal belum tersedia untuk saat ini.</p></div>";

@@ -38,7 +38,20 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 
                 <div class="card card-table">
                     <div class="card-body p-0">
-                        <div class="table-responsive">
+                        <?php
+                        $q = db_query($conn, "SELECT d.*, u.username, u.email 
+                                                 FROM dokter d 
+                                                 JOIN users u ON d.id_user = u.id_user 
+                                                 ORDER BY d.nama_dokter ASC");
+                        $dokters = [];
+                        if ($q) {
+                            while($row = db_fetch_assoc($q)) {
+                                $dokters[] = $row;
+                            }
+                        }
+                        ?>
+                        <!-- Desktop View Table -->
+                        <div class="table-responsive d-none d-md-block">
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
@@ -51,16 +64,7 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    // Inisialisasi nomor urut
-                                    $no = 1;
-                                    $q = db_query($conn, "SELECT d.*, u.username, u.email 
-                                                             FROM dokter d 
-                                                             JOIN users u ON d.id_user = u.id_user 
-                                                             ORDER BY d.nama_dokter ASC");
-                                    
-                                    while($d = db_fetch_assoc($q)):
-                                    ?>
+                                    <?php if(!empty($dokters)): $no = 1; foreach($dokters as $d): ?>
                                     <tr>
                                         <td class="ps-4 fw-bold text-muted"><?php echo $no++; ?>.</td>
                                         <td>
@@ -88,15 +92,44 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                                             </div>
                                         </td>
                                     </tr>
-                                    <?php endwhile; ?>
-                                    
-                                    <?php if(db_num_rows($q) == 0): ?>
+                                    <?php endforeach; else: ?>
                                     <tr>
                                         <td colspan="6" class="text-center py-5 text-muted small">Data dokter tidak ditemukan.</td>
                                     </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- Mobile View Cards -->
+                        <div class="d-md-none p-3 d-flex flex-column gap-3">
+                            <?php if(!empty($dokters)): $no = 1; foreach($dokters as $d): ?>
+                                <div class="card border-0 shadow-sm p-3 rounded-4" style="background: linear-gradient(135deg, #f4faf7, #eaf6f0); border-left: 5px solid #0f3d2e !important;">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <span class="text-muted small fw-bold">#<?php echo $no++; ?></span>
+                                            <h6 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($d['nama_dokter']); ?></h6>
+                                            <span class="badge bg-success bg-opacity-10 text-success px-3 rounded-pill small"><?php echo htmlspecialchars($d['spesialisasi']); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted small mb-1">
+                                        <i class="far fa-envelope me-1"></i> <?php echo htmlspecialchars($d['email']); ?>
+                                    </div>
+                                    <div class="small mb-3">
+                                        <i class="far fa-user me-1"></i> <code class="text-primary fw-bold">@<?php echo htmlspecialchars($d['username']); ?></code>
+                                    </div>
+                                    <div class="d-flex gap-2 justify-content-end border-top pt-2">
+                                        <a href="edit_dokter.php?id=<?php echo $d['id_dokter']; ?>" class="btn btn-sm btn-outline-primary px-3 rounded-pill">
+                                            <i class="fas fa-edit me-1"></i> Edit
+                                        </a>
+                                        <button onclick="hapusDokter(<?php echo $d['id_user']; ?>)" class="btn btn-sm btn-outline-danger px-3 rounded-pill">
+                                            <i class="fas fa-trash me-1"></i> Hapus
+                                        </button>
+                                    </div>
+                                </div>
+                            <?php endforeach; else: ?>
+                                <div class="text-center py-5 text-muted small">Data dokter tidak ditemukan.</div>
+                            <?php endif; ?>
                 </div>
             </div>
         </div>

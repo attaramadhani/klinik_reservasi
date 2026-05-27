@@ -31,6 +31,10 @@ if (isset($_POST['register'])) {
     if (!preg_match('/^[0-9]{16}$/', $nik)) {
         $pesan_error = "NIK harus tepat 16 digit angka (0-9), tanpa huruf atau spasi!";
     }
+    // Validasi Tanggal Lahir tidak boleh melebihi hari ini
+    elseif (strtotime($tanggal_lahir) > time()) {
+        $pesan_error = "Tanggal lahir tidak boleh melebihi tanggal hari ini!";
+    }
     // 3. Validasi No. HP (hanya angka, 10-15 digit)
     elseif (!preg_match('/^[0-9]{10,15}$/', $hp)) {
         $pesan_error = "Nomor HP hanya boleh angka, minimal 10 dan maksimal 15 digit!";
@@ -204,7 +208,7 @@ if (isset($_POST['register'])) {
                     <label class="fw-bold small mb-1">Tanggal Lahir</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="fas fa-calendar-alt text-muted"></i></span>
-                        <input type="date" name="tanggal_lahir" class="form-control" required>
+                        <input type="date" name="tanggal_lahir" class="form-control" max="<?php echo date('Y-m-d'); ?>" required>
                     </div>
                 </div>
             </div>

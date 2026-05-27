@@ -32,7 +32,17 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
 <div class="main-content">
     <h2 class="fw-bold mb-4">Daftar Pasien Terdaftar</h2>
     <div class="card card-table p-4">
-        <div class="table-responsive">
+        <?php
+        $q = db_query($conn, "SELECT * FROM pasien JOIN users ON pasien.id_user = users.id_user ORDER BY pasien.nik ASC");
+        $pasiens = [];
+        if ($q) {
+            while ($row = db_fetch_assoc($q)) {
+                $pasiens[] = $row;
+            }
+        }
+        ?>
+        <!-- Desktop View Table -->
+        <div class="table-responsive d-none d-md-block">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
                     <tr>
@@ -45,10 +55,7 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    $q = db_query($conn, "SELECT * FROM pasien JOIN users ON pasien.id_user = users.id_user ORDER BY pasien.nik ASC");
-                    while($row = db_fetch_assoc($q)):
-                    ?>
+                    <?php if(!empty($pasiens)): foreach($pasiens as $row): ?>
                     <tr>
                         <td class="fw-bold"><?php echo $row['nik']; ?></td>
                         <td><?php echo $row['nama_lengkap']; ?></td>
@@ -64,9 +71,46 @@ if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'admin') {
                             </button>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; else: ?>
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">Belum ada pasien terdaftar.</td>
+                    </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile View Cards -->
+        <div class="d-md-none d-flex flex-column gap-3">
+            <?php if(!empty($pasiens)): foreach($pasiens as $row): ?>
+                <div class="card border-0 shadow-sm p-3 rounded-4" style="background: linear-gradient(135deg, #f4faf7, #eaf6f0); border-left: 5px solid #0f3d2e !important;">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1"><?php echo htmlspecialchars($row['nama_lengkap']); ?></h6>
+                            <span class="badge bg-success bg-opacity-10 text-success px-2 rounded-pill small">NIK: <?php echo $row['nik']; ?></span>
+                        </div>
+                    </div>
+                    <div class="text-muted small mb-1">
+                        <i class="far fa-envelope me-1"></i> <?php echo htmlspecialchars($row['email']); ?>
+                    </div>
+                    <div class="text-muted small mb-1">
+                        <i class="fas fa-phone me-1"></i> <?php echo htmlspecialchars($row['no_hp']); ?>
+                    </div>
+                    <div class="small mb-3 text-muted">
+                        <i class="far fa-calendar me-1"></i> Daftar: <?php echo date('d/m/Y', strtotime($row['created_at'] ?? 'now')); ?>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-end border-top pt-2">
+                        <a href="edit_pasien.php?nik=<?php echo urlencode($row['nik']); ?>" class="btn btn-sm btn-outline-warning px-3 rounded-pill text-dark">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        <button onclick="confirmHapus('<?php echo htmlspecialchars($row['nik']); ?>', '<?php echo htmlspecialchars($row['nama_lengkap']); ?>')" class="btn btn-sm btn-outline-danger px-3 rounded-pill">
+                            <i class="fas fa-trash-alt me-1"></i> Hapus
+                        </button>
+                    </div>
+                </div>
+            <?php endforeach; else: ?>
+                <div class="text-center py-5 text-muted small">Belum ada pasien terdaftar.</div>
+            <?php endif; ?>
         </div>
     </div>
         </div>

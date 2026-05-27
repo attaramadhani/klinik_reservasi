@@ -86,7 +86,7 @@ if (isset($_POST['update'])) {
                         $result_dokter = db_query($conn, $query_dokter);
                         while ($dokter = db_fetch_assoc($result_dokter)) {
                             $selected = ($dokter['id_dokter'] == $data['id_dokter']) ? "selected" : "";
-                            echo "<option value='{$dokter['id_dokter']}' $selected>{$dokter['nama_dokter']} - {$dokter['spesialis']}</option>";
+                            echo "<option value='{$dokter['id_dokter']}' $selected>{$dokter['nama_dokter']} - {$dokter['spesialisasi']}</option>";
                         }
                         ?>
                     </select>

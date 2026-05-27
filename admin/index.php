@@ -178,7 +178,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-2">
+        <div class="col-6 col-md-6 col-lg-2">
             <div class="card stat-card h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
@@ -191,7 +191,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-2">
+        <div class="col-6 col-md-6 col-lg-2">
             <div class="card stat-card h-100 border-0 bg-dark text-white">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -204,7 +204,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-2">
+        <div class="col-6 col-md-6 col-lg-2">
             <div class="card stat-card h-100">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
@@ -217,7 +217,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-lg-2">
+        <div class="col-6 col-md-6 col-lg-2">
             <div class="card stat-card h-100 border-bottom border-danger border-5">
                 <div class="d-flex justify-content-between align-items-start">
                     <div>
@@ -249,7 +249,25 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                             <i class="fas fa-chart-line me-1"></i> Detail Laporan
                         </a>
                     </div>
-                    <div class="table-responsive">
+                    <?php
+                    $bulan_ini = date('Y-m');
+                    
+                    $query_ranking = db_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
+                                                             FROM dokter d 
+                                                             LEFT JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter 
+                                                             LEFT JOIN reservasi r ON j.id_jadwal = r.id_jadwal 
+                                                             AND DATE_FORMAT(r.tanggal_kunjungan, '%Y-%m') = '$bulan_ini'
+                                                             GROUP BY d.id_dokter 
+                                                             ORDER BY total_reservasi DESC");
+                    $rankings = [];
+                    if ($query_ranking) {
+                        while($row_rank = db_fetch_assoc($query_ranking)) {
+                            $rankings[] = $row_rank;
+                        }
+                    }
+                    ?>
+                    <!-- Desktop View Table -->
+                    <div class="table-responsive d-none d-md-block">
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
@@ -260,17 +278,8 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                             </thead>
                             <tbody>
                                 <?php
-                                $bulan_ini = date('Y-m');
-                                
-                                $query_ranking = db_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
-                                                                         FROM dokter d 
-                                                                         LEFT JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter 
-                                                                         LEFT JOIN reservasi r ON j.id_jadwal = r.id_jadwal 
-                                                                         AND DATE_FORMAT(r.tanggal_kunjungan, '%Y-%m') = '$bulan_ini'
-                                                                         GROUP BY d.id_dokter 
-                                                                         ORDER BY total_reservasi DESC");
                                 $rank = 1;
-                                while($row_rank = db_fetch_assoc($query_ranking)):
+                                foreach($rankings as $row_rank):
                                     $is_top = $rank == 1;
                                     $is_second = $rank == 2;
                                     $is_third = $rank == 3;
@@ -306,10 +315,47 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                                 </tr>
                                 <?php 
                                 $rank++;
-                                endwhile; 
+                                endforeach; 
                                 ?>
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile View List -->
+                    <div class="d-md-none p-3 d-flex flex-column gap-2">
+                        <?php
+                        $rank = 1;
+                        foreach($rankings as $row_rank):
+                            $is_top = $rank == 1;
+                            $is_second = $rank == 2;
+                            $is_third = $rank == 3;
+                        ?>
+                        <div class="p-3 rounded-4 d-flex align-items-center justify-content-between <?php echo $is_top ? 'bg-warning bg-opacity-10 border border-warning' : 'bg-light border'; ?>">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="text-center" style="width: 30px;">
+                                    <?php if($is_top): ?>
+                                        <i class="fas fa-medal text-warning fa-lg"></i>
+                                    <?php elseif($is_second): ?>
+                                        <i class="fas fa-medal text-secondary"></i>
+                                    <?php elseif($is_third): ?>
+                                        <i class="fas fa-medal" style="color: #cd7f32;"></i>
+                                    <?php else: ?>
+                                        <span class="fw-bold text-muted small">#<?php echo $rank; ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark <?php echo $is_top ? 'fs-6' : 'small'; ?>"><?php echo htmlspecialchars($row_rank['nama_dokter']); ?></div>
+                                    <?php if($is_top): ?> <span class="badge bg-warning text-dark" style="font-size: 9px;"><i class="fas fa-star me-1"></i> FAVORIT</span> <?php endif; ?>
+                                </div>
+                            </div>
+                            <span class="badge <?php echo $is_top ? 'bg-success' : 'bg-secondary'; ?> rounded-pill px-3 py-1" style="font-size: 11px;">
+                                <i class="fas fa-users me-1"></i> <?php echo $row_rank['total_reservasi']; ?> Pasien
+                            </span>
+                        </div>
+                        <?php
+                        $rank++;
+                        endforeach;
+                        ?>
                     </div>
                 </div>
             </div>
@@ -355,8 +401,22 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
             <div class="p-4 d-flex justify-content-between align-items-center">
                 <h5 class="fw-800 mb-0">Antrian Terbaru Pasien</h5>
                 <a href="reservasi.php" class="btn btn-sm px-4 rounded-pill fw-bold" style="background: #f0f0f0; color: #555;">Lihat Semua <i class="fas fa-chevron-right ms-1" style="font-size: 10px;"></i></a>
-            </div>
-            <div class="table-responsive">
+            </div            <?php
+            $q_queues = db_query($conn, "SELECT r.*, p.nama_lengkap, d.nama_dokter 
+                                                     FROM reservasi r 
+                                                     JOIN pasien p ON r.nik = p.nik
+                                                     JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
+                                                     JOIN dokter d ON j.id_dokter = d.id_dokter
+                                                     ORDER BY r.id_reservasi DESC LIMIT 5");
+            $queues = [];
+            if ($q_queues) {
+                while ($row = db_fetch_assoc($q_queues)) {
+                    $queues[] = $row;
+                }
+            }
+            ?>
+            <!-- Desktop View Table -->
+            <div class="table-responsive d-none d-md-block">
                 <table class="table table-hover align-middle mb-0">
                     <thead>
                         <tr>
@@ -368,15 +428,7 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $q = db_query($conn, "SELECT r.*, p.nama_lengkap, d.nama_dokter 
-                                                 FROM reservasi r 
-                                                 JOIN pasien p ON r.nik = p.nik
-                                                 JOIN jadwal_dokter j ON r.id_jadwal = j.id_jadwal
-                                                 JOIN dokter d ON j.id_dokter = d.id_dokter
-                                                 ORDER BY r.id_reservasi DESC LIMIT 5");
-                        while($row = db_fetch_assoc($q)):
-                        ?>
+                        <?php foreach($queues as $row): ?>
                         <tr>
                             <td class="ps-4"><span class="fw-800 text-muted">#<?php echo $row['no_antrian']; ?></span></td>
                             <td>
@@ -409,9 +461,40 @@ $pendapatan_tahun_ini = $pendapatan_tahun_ini ? $pendapatan_tahun_ini : 0;
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile View List -->
+            <div class="d-md-none p-3 d-flex flex-column gap-2">
+                <?php foreach($queues as $row): ?>
+                <div class="p-3 bg-light rounded-4 border">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="fw-800 text-muted">Antrian #<?php echo $row['no_antrian']; ?></span>
+                        <?php
+                        $color = 'secondary';
+                        if($row['status'] == 'Menunggu') $color = 'warning';
+                        if($row['status'] == 'Dikonfirmasi') $color = 'info';
+                        if($row['status'] == 'Selesai') $color = 'success';
+                        ?>
+                        <span class="status-badge bg-<?php echo $color; ?> bg-opacity-10 text-<?php echo $color; ?>" style="padding: 4px 10px; font-size: 10px;">
+                            <?php echo $row['status']; ?>
+                        </span>
+                    </div>
+                    <div class="fw-bold text-dark small mb-1"><?php echo htmlspecialchars($row['nama_lengkap']); ?></div>
+                    <div class="text-muted small mb-3"><i class="fas fa-user-md me-1"></i> <?php echo htmlspecialchars($row['nama_dokter']); ?></div>
+                    <div class="d-flex justify-content-end border-top pt-2">
+                        <?php if($row['status'] != 'Selesai'): ?>
+                            <a href="input_tagihan.php?id=<?php echo $row['id_reservasi']; ?>" class="btn btn-sm btn-dark rounded-pill px-3 fw-bold" style="font-size: 10px;">
+                                PROSES KASIR
+                            </a>
+                        <?php else: ?>
+                            <span class="text-success small fw-800"><i class="fas fa-check-double"></i> SELESAI</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

@@ -22,7 +22,7 @@ $query_pasien = "SELECT DISTINCT p.*
                  JOIN hasil_pemeriksaan h ON r.id_reservasi = h.id_reservasi";
 
 if ($search != '') {
-    $query_pasien .= " WHERE p.nama_lengkap LIKE '%$search%' OR p.nik LIKE '%$search%'";
+    $query_pasien .= " WHERE LOWER(p.nama_lengkap) LIKE LOWER('%$search%') OR p.nik LIKE '%$search%'";
 }
 
 $query_pasien .= " ORDER BY p.nama_lengkap ASC";

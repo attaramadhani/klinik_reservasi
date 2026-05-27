@@ -188,7 +188,26 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
                         </div>
                     </div>
                     
-                    <div class="table-responsive">
+                    <?php
+                    $query_ranking = db_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
+                                                             FROM dokter d 
+                                                             LEFT JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter 
+                                                             LEFT JOIN reservasi r ON j.id_jadwal = r.id_jadwal 
+                                                             AND DATE_FORMAT(r.tanggal_kunjungan, '%Y-%m') = '$filter_bulan'
+                                                             GROUP BY d.id_dokter 
+                                                             ORDER BY total_reservasi DESC");
+                    $rankings = [];
+                    $has_data = false;
+                    if ($query_ranking) {
+                        while($row_rank = db_fetch_assoc($query_ranking)) {
+                            if($row_rank['total_reservasi'] > 0) $has_data = true;
+                            $rankings[] = $row_rank;
+                        }
+                    }
+                    ?>
+
+                    <!-- Desktop View Table -->
+                    <div class="table-responsive d-none d-md-block">
                         <table class="table table-hover align-middle mb-0">
                             <thead>
                                 <tr>
@@ -199,24 +218,12 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
                             </thead>
                             <tbody>
                                 <?php
-                                $query_ranking = db_query($conn, "SELECT d.nama_dokter, COUNT(r.id_reservasi) as total_reservasi 
-                                                                         FROM dokter d 
-                                                                         LEFT JOIN jadwal_dokter j ON d.id_dokter = j.id_dokter 
-                                                                         LEFT JOIN reservasi r ON j.id_jadwal = r.id_jadwal 
-                                                                         AND DATE_FORMAT(r.tanggal_kunjungan, '%Y-%m') = '$filter_bulan'
-                                                                         GROUP BY d.id_dokter 
-                                                                         ORDER BY total_reservasi DESC");
                                 $rank = 1;
-                                $has_data = false;
-                                
-                                while($row_rank = db_fetch_assoc($query_ranking)):
-                                    if($row_rank['total_reservasi'] > 0) $has_data = true; // Hanya tampilkan data jika ada
-                                    
+                                foreach($rankings as $row_rank):
                                     $is_top = $rank == 1;
                                     $is_second = $rank == 2;
                                     $is_third = $rank == 3;
                                 ?>
-                                
                                 <tr <?php echo $is_top ? 'class="table-warning bg-opacity-10"' : ''; ?>>
                                     <td class="ps-5 text-center">
                                         <?php if($is_top): ?>
@@ -248,10 +255,9 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
                                 </tr>
                                 <?php 
                                 $rank++;
-                                endwhile; 
-                                
-                                if(!$has_data):
+                                endforeach; 
                                 ?>
+                                <?php if(!$has_data): ?>
                                 <tr>
                                     <td colspan="3" class="text-center py-5 text-muted">
                                         <i class="fas fa-folder-open fa-3x mb-3 opacity-25"></i>
@@ -261,6 +267,50 @@ $data_grafik_json = json_encode(array_values($pendapatan_bulanan));
                                 <?php endif; ?>
                             </tbody>
                         </table>
+                    </div>
+
+                    <!-- Mobile View List -->
+                    <div class="d-md-none p-3 d-flex flex-column gap-2">
+                        <?php if($has_data): ?>
+                            <?php
+                            $rank = 1;
+                            foreach($rankings as $row_rank):
+                                $is_top = $rank == 1;
+                                $is_second = $rank == 2;
+                                $is_third = $rank == 3;
+                            ?>
+                            <div class="p-3 rounded-4 d-flex align-items-center justify-content-between <?php echo $is_top ? 'bg-warning bg-opacity-10 border border-warning' : 'bg-light border'; ?>">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="text-center" style="width: 30px;">
+                                        <?php if($is_top): ?>
+                                            <i class="fas fa-medal text-warning fa-lg"></i>
+                                        <?php elseif($is_second): ?>
+                                            <i class="fas fa-medal text-secondary"></i>
+                                        <?php elseif($is_third): ?>
+                                            <i class="fas fa-medal" style="color: #cd7f32;"></i>
+                                        <?php else: ?>
+                                            <span class="fw-bold text-muted small">#<?php echo $rank; ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark <?php echo $is_top ? 'fs-6' : 'small'; ?>"><?php echo htmlspecialchars($row_rank['nama_dokter']); ?></div>
+                                        <?php if($is_top): ?> <span class="badge bg-warning text-dark" style="font-size: 9px;"><i class="fas fa-star me-1"></i> FAVORIT</span> <?php endif; ?>
+                                    </div>
+                                </div>
+                                <span class="badge <?php echo $is_top ? 'bg-success' : 'bg-secondary'; ?> rounded-pill px-3 py-1" style="font-size: 11px;">
+                                    <i class="fas fa-users me-1"></i> <?php echo $row_rank['total_reservasi']; ?> Pasien
+                                </span>
+                            </div>
+                            <?php
+                            $rank++;
+                            endforeach;
+                            ?>
+                        <?php else: ?>
+                            <div class="text-center py-5 text-muted">
+                                <i class="fas fa-folder-open fa-2x mb-2 opacity-25"></i>
+                                <p class="small mb-0">Belum ada data reservasi pada bulan yang dipilih.</p>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
